@@ -115,70 +115,72 @@ class _PlaybookSetupScreenState extends State<PlaybookSetupScreen> {
 
                 ...Playbook.availablePlaybooks.map((playbook) {
                   final isSelected = _selectedPlaybook == playbook;
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Card(
-                      elevation: isSelected ? 4 : 1,
-                      color: isSelected ? colorScheme.primaryContainer : null,
-                      child: InkWell(
-                        onTap: playbookService.status == PlaybookStatus.idle
-                            ? () {
-                                setState(() {
-                                  _selectedPlaybook = playbook;
-                                  _selectedOptions.clear();
-                                });
-                                // Reset the service config when changing playbooks
-                                playbookService.reset();
-                              }
-                            : null,
-                        borderRadius: BorderRadius.circular(12),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            children: [
-                              Radio<Playbook>(
-                                value: playbook,
-                                groupValue: _selectedPlaybook,
-                                onChanged:
-                                    playbookService.status ==
-                                        PlaybookStatus.idle
-                                    ? (value) {
-                                        setState(() {
-                                          _selectedPlaybook = value;
-                                          _selectedOptions.clear();
-                                        });
-                                        playbookService.reset();
-                                      }
-                                    : null,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      playbook.name,
-                                      style: textTheme.titleSmall?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: isSelected
-                                            ? colorScheme.onPrimaryContainer
-                                            : null,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      playbook.description,
-                                      style: textTheme.bodySmall?.copyWith(
-                                        color: isSelected
-                                            ? colorScheme.onPrimaryContainer
-                                                  .withValues(alpha: 0.8)
-                                            : colorScheme.onSurfaceVariant,
-                                      ),
-                                    ),
-                                  ],
+                  return RadioGroup<Playbook>(
+                    groupValue: _selectedPlaybook,
+                    onChanged: (Playbook? value) {
+                      setState(() {
+                        _selectedPlaybook = value;
+                        _selectedOptions.clear();
+                      });
+                      playbookService.reset();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Card(
+                        elevation: isSelected ? 4 : 1,
+                        color: isSelected ? colorScheme.primaryContainer : null,
+                        child: InkWell(
+                          onTap: playbookService.status == PlaybookStatus.idle
+                              ? () {
+                                  setState(() {
+                                    _selectedPlaybook = playbook;
+                                    _selectedOptions.clear();
+                                  });
+                                  // Reset the service config when changing playbooks
+                                  playbookService.reset();
+                                }
+                              : null,
+                          borderRadius: BorderRadius.circular(12),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Row(
+                              children: [
+                                Radio<Playbook>(
+                                  value: playbook,
+                                  enabled:
+                                      playbookService.status ==
+                                      PlaybookStatus.idle,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        playbook.name,
+                                        style: textTheme.titleSmall?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: isSelected
+                                              ? colorScheme.onPrimaryContainer
+                                              : null,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        playbook.description,
+                                        style: textTheme.bodySmall?.copyWith(
+                                          color: isSelected
+                                              ? colorScheme.onPrimaryContainer
+                                                    .withValues(alpha: 0.8)
+                                              : colorScheme.onSurfaceVariant,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -280,71 +282,68 @@ class _PlaybookSetupScreenState extends State<PlaybookSetupScreen> {
                                   return const SizedBox.shrink();
                                 }
 
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if (option.description != null) ...[
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 12,
-                                          bottom: 8,
+                                return RadioGroup<String>(
+                                  groupValue: _selectedOptions.entries
+                                      .firstWhere(
+                                        (entry) =>
+                                            entry.value &&
+                                            radioGroup.any(
+                                              (o) => o.name == entry.key,
+                                            ),
+                                        orElse: () => MapEntry(
+                                          radioGroup
+                                              .firstWhere(
+                                                (o) => o.isChecked,
+                                                orElse: () => radioGroup.first,
+                                              )
+                                              .name,
+                                          true,
                                         ),
-                                        child: Text(
-                                          option.description!,
-                                          style: textTheme.titleSmall?.copyWith(
-                                            fontWeight: FontWeight.w600,
+                                      )
+                                      .key,
+                                  onChanged: (String? value) {
+                                    setState(() {
+                                      for (final opt in radioGroup) {
+                                        _selectedOptions[opt.name] = false;
+                                      }
+                                      _selectedOptions[value!] = true;
+                                    });
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (option.description != null) ...[
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 12,
+                                            bottom: 8,
+                                          ),
+                                          child: Text(
+                                            option.description!,
+                                            style: textTheme.titleSmall
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                ),
                                           ),
                                         ),
-                                      ),
+                                      ],
+                                      ...radioGroup.map((radioOption) {
+                                        return RadioListTile<String>(
+                                          title: Text(
+                                            radioOption.displayName,
+                                            style: textTheme.bodyMedium,
+                                          ),
+                                          value: radioOption.name,
+                                          enabled:
+                                              playbookService.status ==
+                                              PlaybookStatus.idle,
+                                          contentPadding: EdgeInsets.zero,
+                                        );
+                                      }),
+                                      const Divider(height: 24),
                                     ],
-                                    ...radioGroup.map((radioOption) {
-                                      return RadioListTile<String>(
-                                        title: Text(
-                                          radioOption.displayName,
-                                          style: textTheme.bodyMedium,
-                                        ),
-                                        value: radioOption.name,
-                                        groupValue: _selectedOptions.entries
-                                            .firstWhere(
-                                              (entry) =>
-                                                  entry.value &&
-                                                  radioGroup.any(
-                                                    (o) => o.name == entry.key,
-                                                  ),
-                                              orElse: () => MapEntry(
-                                                radioGroup
-                                                    .firstWhere(
-                                                      (o) => o.isChecked,
-                                                      orElse: () =>
-                                                          radioGroup.first,
-                                                    )
-                                                    .name,
-                                                true,
-                                              ),
-                                            )
-                                            .key,
-                                        onChanged:
-                                            playbookService.status ==
-                                                PlaybookStatus.idle
-                                            ? (value) {
-                                                setState(() {
-                                                  // Unselect all options in this group
-                                                  for (final opt
-                                                      in radioGroup) {
-                                                    _selectedOptions[opt.name] =
-                                                        false;
-                                                  }
-                                                  // Select the chosen one
-                                                  _selectedOptions[value!] =
-                                                      true;
-                                                });
-                                              }
-                                            : null,
-                                        contentPadding: EdgeInsets.zero,
-                                      );
-                                    }),
-                                    const Divider(height: 24),
-                                  ],
+                                  ),
                                 );
                               }
 
@@ -391,99 +390,79 @@ class _PlaybookSetupScreenState extends State<PlaybookSetupScreen> {
                                   return const SizedBox.shrink();
                                 }
 
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 12,
-                                        bottom: 8,
-                                      ),
-                                      child: Text(
-                                        'Default Browser',
-                                        style: textTheme.titleSmall?.copyWith(
-                                          fontWeight: FontWeight.w600,
+                                return RadioGroup<String>(
+                                  groupValue: _selectedOptions.entries
+                                      .firstWhere(
+                                        (entry) =>
+                                            entry.value &&
+                                            softwareGroup.any(
+                                              (o) => o.name == entry.key,
+                                            ),
+                                        orElse: () =>
+                                            const MapEntry('none', true),
+                                      )
+                                      .key,
+                                  onChanged: (String? value) {
+                                    setState(() {
+                                      for (final opt in softwareGroup) {
+                                        _selectedOptions[opt.name] = false;
+                                      }
+                                      if (value != null && value != 'none') {
+                                        _selectedOptions[value] = true;
+                                      }
+                                    });
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 12,
+                                          bottom: 8,
+                                        ),
+                                        child: Text(
+                                          'Default Browser',
+                                          style: textTheme.titleSmall?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    RadioListTile<String>(
-                                      title: const Text('None'),
-                                      value: 'none',
-                                      groupValue: _selectedOptions.entries
-                                          .firstWhere(
-                                            (entry) =>
-                                                entry.value &&
-                                                softwareGroup.any(
-                                                  (o) => o.name == entry.key,
-                                                ),
-                                            orElse: () =>
-                                                const MapEntry('none', true),
-                                          )
-                                          .key,
-                                      onChanged:
-                                          playbookService.status ==
-                                              PlaybookStatus.idle
-                                          ? (value) {
-                                              setState(() {
-                                                for (final opt
-                                                    in softwareGroup) {
-                                                  _selectedOptions[opt.name] =
-                                                      false;
-                                                }
-                                              });
-                                            }
-                                          : null,
-                                      contentPadding: EdgeInsets.zero,
-                                    ),
-                                    ...softwareGroup.map((softwareOption) {
-                                      return RadioListTile<String>(
-                                        title: Text(
-                                          softwareOption.displayName,
-                                          style: textTheme.bodyMedium,
-                                        ),
-                                        subtitle:
-                                            softwareOption.description != null
-                                            ? Text(
-                                                softwareOption.description!,
-                                                style: textTheme.bodySmall
-                                                    ?.copyWith(
-                                                      color: colorScheme
-                                                          .onSurfaceVariant,
-                                                    ),
-                                              )
-                                            : null,
-                                        value: softwareOption.name,
-                                        groupValue: _selectedOptions.entries
-                                            .firstWhere(
-                                              (entry) =>
-                                                  entry.value &&
-                                                  softwareGroup.any(
-                                                    (o) => o.name == entry.key,
-                                                  ),
-                                              orElse: () =>
-                                                  const MapEntry('none', true),
-                                            )
-                                            .key,
-                                        onChanged:
+                                      RadioListTile<String>(
+                                        title: const Text('None'),
+                                        value: 'none',
+                                        enabled:
                                             playbookService.status ==
-                                                PlaybookStatus.idle
-                                            ? (value) {
-                                                setState(() {
-                                                  for (final opt
-                                                      in softwareGroup) {
-                                                    _selectedOptions[opt.name] =
-                                                        false;
-                                                  }
-                                                  _selectedOptions[value!] =
-                                                      true;
-                                                });
-                                              }
-                                            : null,
+                                            PlaybookStatus.idle,
                                         contentPadding: EdgeInsets.zero,
-                                      );
-                                    }),
-                                    const Divider(height: 24),
-                                  ],
+                                      ),
+                                      ...softwareGroup.map((softwareOption) {
+                                        return RadioListTile<String>(
+                                          title: Text(
+                                            softwareOption.displayName,
+                                            style: textTheme.bodyMedium,
+                                          ),
+                                          subtitle:
+                                              softwareOption.description != null
+                                              ? Text(
+                                                  softwareOption.description!,
+                                                  style: textTheme.bodySmall
+                                                      ?.copyWith(
+                                                        color: colorScheme
+                                                            .onSurfaceVariant,
+                                                      ),
+                                                )
+                                              : null,
+                                          value: softwareOption.name,
+                                          enabled:
+                                              playbookService.status ==
+                                              PlaybookStatus.idle,
+                                          contentPadding: EdgeInsets.zero,
+                                        );
+                                      }),
+                                      const Divider(height: 24),
+                                    ],
+                                  ),
                                 );
                               }
 
@@ -677,7 +656,7 @@ class _PlaybookSetupScreenState extends State<PlaybookSetupScreen> {
     // Step 1: Check admin rights
     final isAdmin = await SecurityCheckerService.isRunningAsAdmin();
     if (!isAdmin) {
-      if (!mounted) return;
+      if (!context.mounted) return;
       final requestElevation = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
@@ -721,7 +700,7 @@ class _PlaybookSetupScreenState extends State<PlaybookSetupScreen> {
     final defenderEnabled =
         await SecurityCheckerService.isWindowsDefenderEnabled();
     if (defenderEnabled) {
-      if (!mounted) return;
+      if (!context.mounted) return;
 
       // Show dialog instructing user to disable Windows Defender
       await showDialog(
@@ -733,7 +712,7 @@ class _PlaybookSetupScreenState extends State<PlaybookSetupScreen> {
     }
 
     // Step 3: Show confirmation dialog
-    if (!mounted) return;
+    if (!context.mounted) return;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -804,7 +783,7 @@ class _PlaybookSetupScreenState extends State<PlaybookSetupScreen> {
         .toList();
 
     // Run playbook
-    if (!mounted) return;
+    if (!context.mounted) return;
     final playbookService = context.read<PlaybookService>();
     await playbookService.runPlaybook(
       _selectedPlaybook!,
