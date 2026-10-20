@@ -5,6 +5,18 @@ All notable changes to XToolBox are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.2.2] - 2026-10-20
+
+### Fixed
+
+- The Downloads settings now actually apply. Previously the custom
+  download path, HTTPS-only mode, and bandwidth limit were saved but
+  never used — downloads always went to the system Downloads folder, at
+  full speed, over any scheme. The download service now reads all three
+  settings: files land in the configured folder, HTTPS-only mode
+  refuses non-HTTPS downloads with a clear error, and the bandwidth
+  limit (KB/s) throttles transfers.
+
 ## [5.2.1] - 2026-10-20
 
 Security fix for archive extraction.
