@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:archive/archive_io.dart';
+import '../utils/archive_extraction.dart';
 import 'toast_notification_service.dart';
 
 class DownloadTask {
@@ -183,21 +184,13 @@ class DownloadService {
       await extractDir.create(recursive: true);
     }
 
-    // Extract based on file extension
+    // Extract based on file extension. ArchiveExtraction validates every
+    // entry path before writing, so archives cannot escape extractPath.
     if (archivePath.endsWith('.zip')) {
-      final archive = ZipDecoder().decodeBytes(bytes);
-      for (final file in archive) {
-        final filename = file.name;
-        final filePath = '$extractPath/$filename';
-
-        if (file.isFile) {
-          final outFile = File(filePath);
-          await outFile.create(recursive: true);
-          await outFile.writeAsBytes(file.content as List<int>);
-        } else {
-          await Directory(filePath).create(recursive: true);
-        }
-      }
+      await ArchiveExtraction.extract(
+        ZipDecoder().decodeBytes(bytes),
+        extractPath,
+      );
     } else if (archivePath.endsWith('.tar.gz') ||
         archivePath.endsWith('.tar')) {
       // Handle tar archives
@@ -209,18 +202,7 @@ class DownloadService {
         archive = TarDecoder().decodeBytes(bytes);
       }
 
-      for (final file in archive) {
-        final filename = file.name;
-        final filePath = '$extractPath/$filename';
-
-        if (file.isFile) {
-          final outFile = File(filePath);
-          await outFile.create(recursive: true);
-          await outFile.writeAsBytes(file.content as List<int>);
-        } else {
-          await Directory(filePath).create(recursive: true);
-        }
-      }
+      await ArchiveExtraction.extract(archive, extractPath);
     }
   }
 
