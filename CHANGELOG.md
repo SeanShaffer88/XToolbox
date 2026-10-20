@@ -5,6 +5,18 @@ All notable changes to XToolBox are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.2.1] - 2026-10-20
+
+Security fix for archive extraction.
+
+### Security
+
+- Archive extraction now validates every entry before writing anything:
+  entries that would escape the destination folder (`../`, absolute or
+  Windows drive paths) and symbolic-link entries are rejected. This applies
+  to catalog downloads and to the TrustedUninstaller CLI and playbook ZIP
+  extraction in the playbook flow, which now share one safe extractor.
+
 ## [5.2.0] - 2026-10-20
 
 Catalog expansion: 77 → 133 tools, broken downloads repaired, two new playbooks.
