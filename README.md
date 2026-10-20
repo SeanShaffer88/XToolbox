@@ -18,6 +18,8 @@ Originally made by [Nyx](https://nyx.meowery.eu).
 2. If this program gets flagged as malware, it's a false positive, here's why:
     1. It downloads and executes files — that's how the installers and playbooks work.
     2. It's a compiled Dart (Flutter) binary, which some scanners distrust.
+    3. The builds aren't code-signed yet, so Windows SmartScreen may also warn on first run — choose "More info" → "Run anyway".
+3. Running a playbook needs administrator rights (the app will offer to restart itself elevated) and Windows Defender Real-Time Protection turned off — playbooks can't run with it on. The app checks both and walks you through it before anything executes.
 
 ## 📸 Screenshots
 <details>

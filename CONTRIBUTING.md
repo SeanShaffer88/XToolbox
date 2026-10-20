@@ -34,8 +34,9 @@ flutter build windows --release
 ## Checks
 
 Run these before opening a pull request. The CI workflow
-(`.github/workflows/ci.yml`) runs the same gates on every push and pull
-request:
+(`.github/workflows/ci.yml`) runs the format, analyze, and test gates on
+every push and pull request, and builds the Windows release from
+version tags:
 
 ```
 dart format lib/ test/                  # the codebase is dart-format clean
