@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:archive/archive.dart';
 import 'package:xml/xml.dart';
 import '../models/playbook.dart';
+import '../utils/archive_extraction.dart';
 import 'toast_notification_service.dart';
 
 enum PlaybookStatus {
@@ -204,19 +205,17 @@ class PlaybookService extends ChangeNotifier {
     }
     await cliDir.create(recursive: true);
 
-    for (final file in archive) {
-      final filename = '$workDir/CLI-Standalone/${file.name}';
-      if (file.isFile) {
-        final outFile = File(filename);
-        await outFile.create(recursive: true);
-        await outFile.writeAsBytes(file.content as List<int>);
+    final extractedFiles = await ArchiveExtraction.extract(
+      archive,
+      cliDir.path,
+    );
 
-        // Make executable on Linux
-        if (Platform.isLinux && file.name.endsWith('.exe')) {
-          await Process.run('chmod', ['+x', filename]);
-        }
-      } else {
-        await Directory(filename).create(recursive: true);
+    // Make executables runnable on Linux.
+    if (Platform.isLinux) {
+      for (final filename in extractedFiles.where(
+        (path) => path.endsWith('.exe'),
+      )) {
+        await Process.run('chmod', ['+x', filename]);
       }
     }
 
@@ -275,16 +274,7 @@ class PlaybookService extends ChangeNotifier {
       final bytes = await downloadedFile.readAsBytes();
       final archive = ZipDecoder().decodeBytes(bytes);
 
-      for (final file in archive) {
-        final filePath = '${extractDir.path}/${file.name}';
-        if (file.isFile) {
-          final outFile = File(filePath);
-          await outFile.create(recursive: true);
-          await outFile.writeAsBytes(file.content as List<int>);
-        } else {
-          await Directory(filePath).create(recursive: true);
-        }
-      }
+      await ArchiveExtraction.extract(archive, extractDir.path);
 
       // Find and extract the .apbx file if it exists
       final apbxFiles = await extractDir
