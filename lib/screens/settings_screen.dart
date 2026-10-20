@@ -408,10 +408,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: preferences.length,
-                        onReorder: (oldIndex, newIndex) {
-                          if (oldIndex < newIndex) {
-                            newIndex -= 1;
-                          }
+                        onReorderItem: (oldIndex, newIndex) {
                           final items = List<String>.from(preferences);
                           final item = items.removeAt(oldIndex);
                           items.insert(newIndex, item);
