@@ -14,11 +14,10 @@ Originally made by [Nyx](https://nyx.meowery.eu).
 4. You now have XToolBox running on your computer, pretty cool!
 
 ## 📑 Important
-1. This program will run __ONLY__ on Windows 10 (tested on 22H2 and LTSC) and Windows 11 (tested on 25H2 and LTSC), it's not advised to use older version of Windows, like Windows 7 or Windows 8.1. If you are using these unsupported versions, please upgrade to a supported one or install Linux. I can't and won't prevent you from using XTB on an older version of Windows tho.
+1. This program runs on Windows 10 (tested on 22H2 and LTSC) and Windows 11 (tested on 25H2 and LTSC). Older versions, like Windows 7 or Windows 8.1, aren't supported. The source also builds on Linux, but everything in the toolbox targets Windows, so that's where it's useful.
 2. If this program gets flagged as malware, it's a false positive, here's why:
-    1. It downloads and executes files.
-    2. It's packed with UPX.
-    3. It's a compiled Dart binary.
+    1. It downloads and executes files — that's how the installers and playbooks work.
+    2. It's a compiled Dart (Flutter) binary, which some scanners distrust.
 
 ## 📸 Screenshots
 <details>
@@ -59,6 +58,7 @@ Originally made by [Nyx](https://nyx.meowery.eu).
 
 ## ⚒️ Building
 - The building process requires [Flutter](https://docs.flutter.dev/get-started/quick) and [Git](https://git-scm.com/downloads)
+- Building for Windows also requires Visual Studio 2022 with the **Desktop development with C++** workload (a Flutter requirement)
 ```
 git clone https://github.com/SeanShaffer88/XToolbox
 cd XToolbox
@@ -66,8 +66,11 @@ flutter pub get
 flutter build windows --release
 cd build/windows/x64/runner/Release
 ```
+Run `xtoolbox.exe` from that folder to test your build.
 >[!NOTE]
 > You have to zip up the entire Release folder, not only the `xtoolbox.exe` file!
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, checks, and how to add tools to the catalog.
 
 ## 🔗 Links
 <a href="https://star-history.com/#SeanShaffer88/xtoolbox&Date">
