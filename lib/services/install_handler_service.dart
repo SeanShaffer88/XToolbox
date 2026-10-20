@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:process_run/shell.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'toast_notification_service.dart';
 import 'download_service.dart';
 import '../models/asset.dart';
@@ -45,6 +46,9 @@ class InstallHandlerService {
 
         case InstallType.microsoftStore:
           return await _handleMicrosoftStore(method, appName, toastId);
+
+        case InstallType.webLink:
+          return await _handleWebLink(method, appName, toastId);
       }
     } catch (e) {
       if (toastId != null) {
@@ -157,6 +161,39 @@ class InstallHandlerService {
     } else {
       return InstallResult.failed;
     }
+  }
+
+  Future<InstallResult> _handleWebLink(
+    InstallMethod method,
+    String appName,
+    String toastId,
+  ) async {
+    if (method.url == null) {
+      _toastService.updateNotification(
+        id: toastId,
+        status: ToastStatus.error,
+        message: 'No URL provided',
+      );
+      return InstallResult.failed;
+    }
+
+    final uri = Uri.parse(method.url!);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      _toastService.updateNotification(
+        id: toastId,
+        status: ToastStatus.success,
+        message: 'Opened in browser',
+      );
+      return InstallResult.success;
+    }
+
+    _toastService.updateNotification(
+      id: toastId,
+      status: ToastStatus.error,
+      message: 'Could not open the link in a browser',
+    );
+    return InstallResult.failed;
   }
 
   Future<InstallResult> _handleWinget(
