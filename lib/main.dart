@@ -29,8 +29,13 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => SettingsService()),
         ChangeNotifierProvider(create: (_) => AssetProvider()),
         ChangeNotifierProvider(create: (_) => ToastNotificationService()),
-        ProxyProvider<ToastNotificationService, DownloadService>(
-          update: (_, toastService, _) => DownloadService(toastService),
+        ProxyProvider2<
+          ToastNotificationService,
+          SettingsService,
+          DownloadService
+        >(
+          update: (_, toastService, settingsService, _) =>
+              DownloadService(toastService, settingsService),
         ),
         ProxyProvider2<
           ToastNotificationService,
