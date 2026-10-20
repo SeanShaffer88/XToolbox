@@ -219,6 +219,8 @@ class _InstallMethodCardState extends State<_InstallMethodCard> {
         return Icons.store;
       case InstallType.powershell:
         return Icons.terminal;
+      case InstallType.webLink:
+        return Icons.open_in_browser;
     }
   }
 
