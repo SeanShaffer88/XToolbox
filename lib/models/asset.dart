@@ -54,7 +54,8 @@ enum InstallType {
   chocolatey,
   scoop,
   microsoftStore,
-  powershell;
+  powershell,
+  webLink;
 
   static InstallType fromString(String type) {
     switch (type) {
@@ -70,6 +71,8 @@ enum InstallType {
         return InstallType.microsoftStore;
       case 'powershell':
         return InstallType.powershell;
+      case 'web_link':
+        return InstallType.webLink;
       default:
         return InstallType.directDownload;
     }
@@ -89,6 +92,8 @@ enum InstallType {
         return 'Microsoft Store';
       case InstallType.powershell:
         return 'PowerShell';
+      case InstallType.webLink:
+        return 'Web Link';
     }
   }
 }
