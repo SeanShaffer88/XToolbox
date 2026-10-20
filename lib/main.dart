@@ -5,7 +5,6 @@ import 'package:system_theme/system_theme.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 
 import 'navigation.dart';
-import 'screens/eol_screen.dart';
 import 'utils/theme_provider.dart';
 import 'provider/asset_provider.dart';
 import 'services/toast_notification_service.dart';
@@ -56,15 +55,8 @@ Future<void> main() async {
   );
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  bool _eolDismissed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -79,11 +71,7 @@ class _MyAppState extends State<MyApp> {
               themeMode: themeProvider.themeMode,
               theme: lightTheme,
               darkTheme: darkTheme,
-              home: _eolDismissed
-                  ? const NavigationPage()
-                  : EolScreen(
-                      onContinue: () => setState(() => _eolDismissed = true),
-                    ),
+              home: const NavigationPage(),
               builder: (context, child) {
                 return ToastOverlay(child: child ?? const SizedBox());
               },
