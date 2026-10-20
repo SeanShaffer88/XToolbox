@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:archive/archive_io.dart';
 import '../utils/archive_extraction.dart';
+import 'settings_service.dart';
 import 'toast_notification_service.dart';
 
 class DownloadTask {
@@ -24,9 +25,47 @@ class DownloadTask {
 
 class DownloadService {
   final ToastNotificationService _toastService;
+  final SettingsService? _settingsService;
   final Map<String, bool> _activeDownloads = {};
 
-  DownloadService(this._toastService);
+  DownloadService(this._toastService, [this._settingsService]);
+
+  /// The directory downloads are written to: the user's configured
+  /// download path when one is set, otherwise [defaultPath] (the system
+  /// Downloads folder).
+  @visibleForTesting
+  static String effectiveDownloadPath({
+    required String? configuredPath,
+    required String defaultPath,
+  }) {
+    final trimmed = configuredPath?.trim();
+    return (trimmed == null || trimmed.isEmpty) ? defaultPath : trimmed;
+  }
+
+  /// Whether [url] may be downloaded under the HTTPS-only setting.
+  @visibleForTesting
+  static bool isUrlAllowed(String url, {required bool httpsOnly}) {
+    if (!httpsOnly) return true;
+    return Uri.tryParse(url)?.scheme.toLowerCase() == 'https';
+  }
+
+  /// How long to pause after [bytesDownloaded] bytes so the average
+  /// transfer rate stays at or below [limitBytesPerSecond]. Zero when
+  /// no wait is due, when there is no limit, or when the transfer is
+  /// already at or under the limit.
+  @visibleForTesting
+  static Duration throttleDelay({
+    required int bytesDownloaded,
+    required int? limitBytesPerSecond,
+    required Duration elapsed,
+  }) {
+    if (limitBytesPerSecond == null || limitBytesPerSecond <= 0) {
+      return Duration.zero;
+    }
+    final budgetMs = bytesDownloaded * 1000 ~/ limitBytesPerSecond;
+    final waitMs = budgetMs - elapsed.inMilliseconds;
+    return waitMs > 0 ? Duration(milliseconds: waitMs) : Duration.zero;
+  }
 
   Future<String?> downloadFile({
     required String url,
@@ -48,10 +87,27 @@ class DownloadService {
 
       _activeDownloads[taskId] = true;
 
-      // Get downloads directory
-      final downloadsDir = await getDownloadsDirectory();
-      if (downloadsDir == null) {
+      // HTTPS-only mode (Settings): refuse non-HTTPS sources outright.
+      if (!isUrlAllowed(url, httpsOnly: _settingsService?.httpsOnly ?? false)) {
+        throw Exception(
+          'HTTPS-only mode is on, but this download is not HTTPS',
+        );
+      }
+
+      // Downloads directory: the configured download path (Settings)
+      // when one is set, otherwise the system Downloads folder.
+      final systemDownloadsDir = await getDownloadsDirectory();
+      if (systemDownloadsDir == null) {
         throw Exception('Could not access downloads directory');
+      }
+      final downloadsDir = Directory(
+        effectiveDownloadPath(
+          configuredPath: _settingsService?.downloadPath,
+          defaultPath: systemDownloadsDir.path,
+        ),
+      );
+      if (!await downloadsDir.exists()) {
+        await downloadsDir.create(recursive: true);
       }
 
       // Determine filename
@@ -90,12 +146,28 @@ class DownloadService {
       final contentLength = response.contentLength ?? 0;
       int bytesDownloaded = 0;
 
+      // Bandwidth limit (Settings), stored as KB/s; 1 KB = 1024 bytes.
+      final limitKbps = _settingsService?.bandwidthLimit;
+      final limitBytesPerSecond = (limitKbps != null && limitKbps > 0)
+          ? limitKbps * 1024
+          : null;
+      final stopwatch = Stopwatch()..start();
+
       final sink = file.openWrite();
 
       try {
         await for (final chunk in response.stream) {
           bytesDownloaded += chunk.length;
           sink.add(chunk);
+
+          final delay = throttleDelay(
+            bytesDownloaded: bytesDownloaded,
+            limitBytesPerSecond: limitBytesPerSecond,
+            elapsed: stopwatch.elapsed,
+          );
+          if (delay > Duration.zero) {
+            await Future.delayed(delay);
+          }
 
           if (contentLength > 0) {
             final progress = bytesDownloaded / contentLength;
