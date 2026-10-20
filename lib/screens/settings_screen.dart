@@ -139,6 +139,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       'scoop' => Icons.sync_alt,
       'powershell' => Icons.terminal,
       'direct_download' => Icons.download,
+      'web_link' => Icons.open_in_browser,
       _ => Icons.help_outline,
     };
   }
@@ -150,6 +151,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       'scoop' => 'Scoop',
       'powershell' => 'PowerShell',
       'direct_download' => 'Direct Download',
+      'web_link' => 'Web Link',
       _ => method,
     };
   }
