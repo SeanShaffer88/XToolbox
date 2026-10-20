@@ -17,10 +17,8 @@
             {
                 "type": "direct_download",
                 "label": "Portable",
-                "url": "https://github.com/Teraskull/PyDebloatX/releases/latest/download/PyDebloatX_portable.zip",
-                "filename": "PyDebloatX_portable.zip",
-                "needs_extraction": true,
-                "executable_path": "PyDebloatX.exe"
+                "url": "https://github.com/Teraskull/PyDebloatX/releases/latest/download/PyDebloatX_portable.exe",
+                "filename": "PyDebloatX_portable.exe"
             }
         ]
     },
@@ -305,8 +303,8 @@
             {
                 "type": "direct_download",
                 "label": "Installer",
-                "filename": "qBittorrent-EE-Setup.exe",
-                "url": "https://github.com/c0re100/qBittorrent-Enhanced-Edition/releases/latest/download/qbittorrent_enhanced_release-5.1.3.10_qt6_x64_setup.exe"
+                "filename": "qbittorrent_enhanced_5.2.4.10_x64_setup.exe",
+                "url": "https://github.com/c0re100/qBittorrent-Enhanced-Edition/releases/latest/download/qbittorrent_enhanced_5.2.4.10_x64_setup.exe"
             }
         ]
     },
@@ -902,10 +900,9 @@
         "homepage": "https://github.com/Rectify11/Installer",
         "install_methods": [
             {
-                "type": "direct_download",
-                "label": "Installer",
-                "filename": "Rectify11Installer.exe",
-                "url": "https://github.com/Rectify11/Installer/releases/latest/download/Rectify11Installer.exe"
+                "type": "web_link",
+                "label": "Open in Browser",
+                "url": "https://rectify11.net/"
             }
         ]
     },
@@ -919,10 +916,9 @@
         "homepage": "https://github.com/pbatard/rufus",
         "install_methods": [
             {
-                "type": "direct_download",
-                "label": "Launch Application",
-                "filename": "Rufus.exe",
-                "url": "https://github.com/pbatard/rufus/releases/latest/download/rufus-v4.11.exe"
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Rufus.Rufus"
             }
         ]
     },
@@ -952,10 +948,9 @@
         "homepage": "https://github.com/keepassxreboot/keepassxc",
         "install_methods": [
             {
-                "type": "direct_download",
-                "label": "Installer",
-                "filename": "KeePassXC-Setup.msi",
-                "url": "https://github.com/keepassxreboot/keepassxc/releases/latest/download/KeePassXC-2.7.11-Win64.msi"
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "KeePassXCTeam.KeePassXC"
             }
         ]
     },
@@ -969,10 +964,9 @@
         "homepage": "https://github.com/microsoft/PowerToys",
         "install_methods": [
             {
-                "type": "direct_download",
-                "label": "Installer",
-                "filename": "PowerToys-Setup.exe",
-                "url": "https://github.com/microsoft/PowerToys/releases/latest/download/PowerToysSetup-0.96.1-x64.exe"
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Microsoft.PowerToys"
             }
         ]
     },
@@ -986,10 +980,9 @@
         "homepage": "https://github.com/alacritty/alacritty",
         "install_methods": [
             {
-                "type": "direct_download",
-                "label": "Installer",
-                "filename": "Alacritty-Setup.exe",
-                "url": "https://github.com/alacritty/alacritty/releases/latest/download/Alacritty-v0.16.1-installer.msi"
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Alacritty.Alacritty"
             }
         ]
     },
@@ -1003,10 +996,9 @@
         "homepage": "https://github.com/PowerShell/PowerShell",
         "install_methods": [
             {
-                "type": "direct_download",
-                "label": "PowerShell",
-                "filename": "PowerShell-Setup.msi",
-                "url": "https://github.com/PowerShell/PowerShell/releases/latest/download/PowerShell-7.5.4-win-x64.msi"
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Microsoft.PowerShell"
             }
         ]
     },
@@ -1105,10 +1097,9 @@
         "homepage": "https://github.com/ATLauncher/ATLauncher",
         "install_methods": [
             {
-                "type": "direct_download",
-                "label": "Installer",
-                "filename": "ATLauncher-Setup.exe",
-                "url": "https://github.com/ATLauncher/ATLauncher/releases/latest/download/ATLauncher-v3.4.40.2.exe"
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "ATLauncher.ATLauncher"
             }
         ]
     },
@@ -1122,18 +1113,9 @@
         "homepage": "https://github.com/gorilla-devs/GDLauncher",
         "install_methods": [
             {
-                "type": "direct_download",
-                "label": "Portable",
-                "filename": "GDLauncher-Portable.zip",
-                "url": "https://github.com/gorilla-devs/GDLauncher/releases/download/v/GDLauncher-win-portable.zip",
-                "needs_extraction": true,
-                "executable_path": "Portable"
-            },
-            {
-                "type": "direct_download",
-                "label": "Installer",
-                "filename": "GDLauncher-Setup.exe",
-                "url": "https://github.com/gorilla-devs/GDLauncher/releases/download/v/GDLauncher-win-setup.exe"
+                "type": "web_link",
+                "label": "Open in Browser",
+                "url": "https://gdlauncher.com/"
             }
         ]
     },
@@ -1215,10 +1197,9 @@
         "homepage": "https://feathermc.com/",
         "install_methods": [
             {
-                "type": "direct_download",
-                "label": "Installer",
-                "filename": "FeatherLauncher-Setup.exe",
-                "url": "https://launcher.feathercdn.net/dl/Feather%20Launcher%20Setup%202.5.5.exe"
+                "type": "web_link",
+                "label": "Open in Browser",
+                "url": "https://feather.gg/"
             }
         ]
     },
@@ -1565,6 +1546,960 @@
                 "label": "Shelter",
                 "filename": "Shelter-Installer.exe",
                 "url": "https://github.com/uwu/shelter-installer/releases/latest/download/install-shelter.exe"
+            }
+        ]
+    },
+    {
+        "id": "win11debloat",
+        "name": "Win11Debloat",
+        "description": "PowerShell script that removes pre-installed apps and disables telemetry, ads and other Windows annoyances. No install needed.",
+        "category": "debloat",
+        "icon": "terminal",
+        "author": "Raphire",
+        "homepage": "https://github.com/Raphire/Win11Debloat",
+        "install_methods": [
+            {
+                "type": "powershell",
+                "label": "Launch Application",
+                "command": "& ([scriptblock]::Create((irm \"https://debloat.raphi.re/\")))"
+            }
+        ]
+    },
+    {
+        "id": "unigetui",
+        "name": "UniGetUI",
+        "description": "Graphical front-end that manages packages from Winget, Scoop, Chocolatey and more in one unified interface.",
+        "category": "apps",
+        "icon": "download",
+        "author": "Devolutions",
+        "homepage": "https://github.com/Devolutions/UniGetUI",
+        "install_methods": [
+            {
+                "type": "direct_download",
+                "label": "Installer",
+                "url": "https://github.com/Devolutions/UniGetUI/releases/latest/download/UniGetUI.Installer.exe",
+                "filename": "UniGetUI.Installer.exe"
+            },
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Devolutions.UniGetUI"
+            }
+        ]
+    },
+    {
+        "id": "bulk_crap_uninstaller",
+        "name": "Bulk Crap Uninstaller",
+        "description": "Bulk-uninstall many programs at once, with leftover scanning, quiet uninstalls and forced removal.",
+        "category": "cleaners",
+        "icon": "delete_sweep",
+        "author": "Klocman",
+        "homepage": "https://www.bcuninstaller.com",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Klocman.BulkCrapUninstaller"
+            }
+        ]
+    },
+    {
+        "id": "windhawk",
+        "name": "Windhawk",
+        "description": "Customization marketplace: install community-made mods that restyle and extend Windows and your apps.",
+        "category": "customization",
+        "icon": "extension",
+        "author": "Ramensoftware",
+        "homepage": "https://windhawk.net",
+        "install_methods": [
+            {
+                "type": "direct_download",
+                "label": "Installer",
+                "url": "https://github.com/ramensoftware/windhawk/releases/latest/download/windhawk_setup.exe",
+                "filename": "windhawk_setup.exe"
+            }
+        ]
+    },
+    {
+        "id": "sophia_script",
+        "name": "Sophia Script for Windows",
+        "description": "PowerShell module with 150+ functions to fine-tune, debloat and customize Windows 10/11.",
+        "category": "debloat",
+        "icon": "terminal",
+        "author": "Team Sophia",
+        "homepage": "https://github.com/farag2/Sophia-Script-for-Windows",
+        "install_methods": [
+            {
+                "type": "powershell",
+                "label": "Launch Application",
+                "command": "iwr script.sophia.team -useb | iex"
+            },
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "TeamSophia.SophiaScript"
+            }
+        ]
+    },
+    {
+        "id": "ventoy",
+        "name": "Ventoy",
+        "description": "Multiboot USB creator: copy ISO files onto the stick and pick which one to boot, no reformatting.",
+        "category": "tools",
+        "icon": "usb",
+        "author": "longpanda",
+        "homepage": "https://www.ventoy.net",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Ventoy.Ventoy"
+            }
+        ]
+    },
+    {
+        "id": "sharex",
+        "name": "ShareX",
+        "description": "Screen capture, recording and sharing tool: one keystroke to capture, annotate and upload almost anywhere.",
+        "category": "apps",
+        "icon": "computer",
+        "author": "ShareX Team",
+        "homepage": "https://getsharex.com",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "ShareX.ShareX"
+            }
+        ]
+    },
+    {
+        "id": "sandboxie_plus",
+        "name": "Sandboxie-Plus",
+        "description": "Runs programs in an isolated sandbox so their changes can be discarded, keeping the real system clean.",
+        "category": "tools",
+        "icon": "box",
+        "author": "DavidXanatos",
+        "homepage": "https://sandboxie-plus.com",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Sandboxie.Plus"
+            }
+        ]
+    },
+    {
+        "id": "display_driver_uninstaller",
+        "name": "Display Driver Uninstaller",
+        "description": "Completely removes AMD, NVIDIA and Intel graphics drivers including leftovers, for clean driver reinstalls.",
+        "category": "tools",
+        "icon": "build",
+        "author": "Wagnardsoft",
+        "homepage": "https://www.wagnardsoft.com/display-driver-uninstaller-DDU",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Wagnardsoft.DisplayDriverUninstaller"
+            }
+        ]
+    },
+    {
+        "id": "playnite",
+        "name": "Playnite",
+        "description": "Unified game library manager that brings Steam, GOG, Epic, emulators and more into one launcher.",
+        "category": "gaming",
+        "icon": "sports_esports",
+        "author": "Playnite",
+        "homepage": "https://playnite.link",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Playnite.Playnite"
+            }
+        ]
+    },
+    {
+        "id": "winhance",
+        "name": "Winhance",
+        "description": "Windows 10/11 debloat, optimization and customization app that can also build autounattend install configs.",
+        "category": "debloat",
+        "icon": "rocket",
+        "author": "memstechtips",
+        "homepage": "https://github.com/memstechtips/Winhance",
+        "install_methods": [
+            {
+                "type": "powershell",
+                "label": "Launch Application",
+                "command": "irm \"https://get.winhance.net\" | iex"
+            }
+        ]
+    },
+    {
+        "id": "bleachbit",
+        "name": "BleachBit",
+        "description": "Frees disk space and deletes junk and privacy traces: caches, cookies, logs and temporary files.",
+        "category": "cleaners",
+        "icon": "cleaning_services",
+        "author": "BleachBit Team",
+        "homepage": "https://www.bleachbit.org",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "BleachBit.BleachBit"
+            }
+        ]
+    },
+    {
+        "id": "flyoobe",
+        "name": "Flyoobe",
+        "description": "Windows setup and out-of-box-experience companion: tweak database, preinstalled-app removal and update controls.",
+        "category": "debloat",
+        "icon": "rocket",
+        "author": "builtbybel",
+        "homepage": "https://github.com/builtbybel/Flyoobe",
+        "install_methods": [
+            {
+                "type": "web_link",
+                "label": "Open in Browser",
+                "url": "https://github.com/builtbybel/Flyoobe/releases/latest"
+            }
+        ]
+    },
+    {
+        "id": "fancontrol",
+        "name": "FanControl",
+        "description": "Highly customizable fan-curve control that mixes multiple temperature sensors into one profile.",
+        "category": "tools",
+        "icon": "power",
+        "author": "Rem0o",
+        "homepage": "https://getfancontrol.com",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Rem0o.FanControl"
+            }
+        ]
+    },
+    {
+        "id": "everything",
+        "name": "Everything",
+        "description": "Instant file and folder search by name, powered by a fast NTFS index.",
+        "category": "tools",
+        "icon": "files",
+        "author": "voidtools",
+        "homepage": "https://www.voidtools.com",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "voidtools.Everything"
+            }
+        ]
+    },
+    {
+        "id": "localsend",
+        "name": "LocalSend",
+        "description": "Cross-platform AirDrop alternative: share files with nearby devices over your local network, no internet needed.",
+        "category": "apps",
+        "icon": "p2p",
+        "author": "LocalSend",
+        "homepage": "https://localsend.org",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "LocalSend.LocalSend"
+            }
+        ]
+    },
+    {
+        "id": "rustdesk",
+        "name": "RustDesk",
+        "description": "Open-source, self-hostable remote desktop — a TeamViewer alternative you can run on your own server.",
+        "category": "apps",
+        "icon": "computer",
+        "author": "RustDesk",
+        "homepage": "https://rustdesk.com",
+        "install_methods": [
+            {
+                "type": "web_link",
+                "label": "Open in Browser",
+                "url": "https://github.com/rustdesk/rustdesk/releases/latest"
+            }
+        ]
+    },
+    {
+        "id": "explorerpatcher",
+        "name": "ExplorerPatcher",
+        "description": "Restores and enhances Windows 10/11 taskbar, Start menu and Explorer behaviors that Microsoft removed.",
+        "category": "customization",
+        "icon": "windows",
+        "author": "valinet",
+        "homepage": "https://github.com/valinet/ExplorerPatcher",
+        "install_methods": [
+            {
+                "type": "direct_download",
+                "label": "Installer",
+                "url": "https://github.com/valinet/ExplorerPatcher/releases/latest/download/ep_setup.exe",
+                "filename": "ep_setup.exe"
+            },
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "valinet.ExplorerPatcher"
+            }
+        ]
+    },
+    {
+        "id": "7zip",
+        "name": "7-Zip",
+        "description": "The official 7-Zip file archiver with high compression ratio, supporting 7z, ZIP, RAR and many more formats.",
+        "category": "apps",
+        "icon": "box",
+        "author": "Igor Pavlov",
+        "homepage": "https://www.7-zip.org",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "7zip.7zip"
+            }
+        ]
+    },
+    {
+        "id": "g_helper",
+        "name": "G-Helper",
+        "description": "Lightweight Armoury Crate replacement for ASUS laptops: fan control, keyboard LED, battery and performance modes.",
+        "category": "gaming",
+        "icon": "game",
+        "author": "seerge",
+        "homepage": "https://github.com/seerge/g-helper",
+        "install_methods": [
+            {
+                "type": "direct_download",
+                "label": "Portable",
+                "url": "https://github.com/seerge/g-helper/releases/latest/download/GHelper.zip",
+                "filename": "GHelper.zip",
+                "needs_extraction": true,
+                "executable_path": "GHelper.exe"
+            }
+        ]
+    },
+    {
+        "id": "translucenttb",
+        "name": "TranslucentTB",
+        "description": "Makes the Windows taskbar translucent or transparent, with per-state effects like Clear, Blur and Acrylic.",
+        "category": "customization",
+        "icon": "wallpaper",
+        "author": "TranslucentTB",
+        "homepage": "https://github.com/TranslucentTB/TranslucentTB",
+        "install_methods": [
+            {
+                "type": "direct_download",
+                "label": "Portable",
+                "url": "https://github.com/TranslucentTB/TranslucentTB/releases/latest/download/TranslucentTB-portable-x64.zip",
+                "filename": "TranslucentTB-portable-x64.zip",
+                "needs_extraction": true,
+                "executable_path": "TranslucentTB.exe"
+            }
+        ]
+    },
+    {
+        "id": "seelen_ui",
+        "name": "Seelen UI",
+        "description": "Fully customizable desktop environment for Windows: dock, Start menu replacement, tiling window manager and widgets.",
+        "category": "customization",
+        "icon": "wallpaper",
+        "author": "Seelen",
+        "homepage": "https://github.com/eythaann/Seelen-UI",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Seelen.SeelenUI"
+            }
+        ]
+    },
+    {
+        "id": "flow_launcher",
+        "name": "Flow Launcher",
+        "description": "Quick file search and app launcher for Windows with a large community plugin ecosystem.",
+        "category": "apps",
+        "icon": "rocket",
+        "author": "Flow Launcher",
+        "homepage": "https://www.flowlauncher.com",
+        "install_methods": [
+            {
+                "type": "direct_download",
+                "label": "Installer",
+                "url": "https://github.com/Flow-Launcher/Flow.Launcher/releases/latest/download/Flow-Launcher-Setup.exe",
+                "filename": "Flow-Launcher-Setup.exe"
+            }
+        ]
+    },
+    {
+        "id": "hwinfo",
+        "name": "HWiNFO",
+        "description": "Professional hardware information, diagnostics and sensor monitoring for your whole system.",
+        "category": "tools",
+        "icon": "computer",
+        "author": "REALiX",
+        "homepage": "https://www.hwinfo.com",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "REALiX.HWiNFO"
+            }
+        ]
+    },
+    {
+        "id": "sysinternals_suite",
+        "name": "Sysinternals Suite",
+        "description": "Microsoft's advanced system utilities bundle: Process Explorer, Autoruns, Process Monitor and 70+ more tools.",
+        "category": "tools",
+        "icon": "kit",
+        "author": "Microsoft",
+        "homepage": "https://learn.microsoft.com/en-us/sysinternals/",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Microsoft.Sysinternals.Suite"
+            }
+        ]
+    },
+    {
+        "id": "wiztree",
+        "name": "WizTree",
+        "description": "Finds the files and folders eating your disk space by scanning the NTFS Master File Table in seconds.",
+        "category": "tools",
+        "icon": "files",
+        "author": "Antibody Software",
+        "homepage": "https://diskanalyzer.com",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "AntibodySoftware.WizTree"
+            }
+        ]
+    },
+    {
+        "id": "nanazip",
+        "name": "NanaZip",
+        "description": "Modern 7-Zip derivative with Windows 11 context menu integration, Mica UI and MSIX packaging.",
+        "category": "apps",
+        "icon": "box",
+        "author": "M2Team",
+        "homepage": "https://github.com/M2Team/NanaZip",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "M2Team.NanaZip"
+            }
+        ]
+    },
+    {
+        "id": "patch_my_pc",
+        "name": "Patch My PC Home Updater",
+        "description": "Scans for and bulk-updates 500+ common third-party applications to their latest versions.",
+        "category": "apps",
+        "icon": "download",
+        "author": "Patch My PC",
+        "homepage": "https://patchmypc.com/home-updater",
+        "install_methods": [
+            {
+                "type": "direct_download",
+                "label": "Portable",
+                "url": "https://homeupdater.patchmypc.com/public/PatchMyPC-HomeUpdater-Portable.exe",
+                "filename": "PatchMyPC-HomeUpdater-Portable.exe"
+            },
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "PatchMyPC.PatchMyPC"
+            }
+        ]
+    },
+    {
+        "id": "heroic_games_launcher",
+        "name": "Heroic Games Launcher",
+        "description": "Open-source launcher for your GOG, Amazon Games and Epic Games libraries.",
+        "category": "gaming",
+        "icon": "sports_esports",
+        "author": "Heroic Games Launcher",
+        "homepage": "https://heroicgameslauncher.com",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "HeroicGamesLauncher.HeroicGamesLauncher"
+            }
+        ]
+    },
+    {
+        "id": "sunshine_moonlight",
+        "name": "Sunshine + Moonlight",
+        "description": "Self-hosted game streaming: Sunshine turns your PC into a streaming host, Moonlight is the client that plays it anywhere.",
+        "category": "gaming",
+        "icon": "game",
+        "author": "LizardByte / Moonlight",
+        "homepage": "https://github.com/LizardByte/Sunshine",
+        "install_methods": [
+            {
+                "type": "direct_download",
+                "label": "Sunshine (host)",
+                "url": "https://github.com/LizardByte/Sunshine/releases/latest/download/Sunshine-Windows-AMD64-installer.msi",
+                "filename": "Sunshine-Windows-AMD64-installer.msi"
+            },
+            {
+                "type": "winget",
+                "label": "Moonlight (client)",
+                "package_id": "MoonlightGameStreamingProject.Moonlight"
+            }
+        ]
+    },
+    {
+        "id": "quicklook",
+        "name": "QuickLook",
+        "description": "macOS-style instant file preview: select a file in Explorer and press Space to preview it.",
+        "category": "apps",
+        "icon": "files",
+        "author": "QL-Win",
+        "homepage": "https://github.com/QL-Win/QuickLook",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "QL-Win.QuickLook"
+            }
+        ]
+    },
+    {
+        "id": "ditto",
+        "name": "Ditto",
+        "description": "Clipboard history manager that saves text, images and HTML so you can paste anything you copied before.",
+        "category": "apps",
+        "icon": "extension",
+        "author": "Ditto",
+        "homepage": "https://github.com/sabrogden/Ditto",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Ditto.Ditto"
+            }
+        ]
+    },
+    {
+        "id": "veracrypt",
+        "name": "VeraCrypt",
+        "description": "Disk and volume encryption: create encrypted containers or encrypt whole partitions, successor lineage to TrueCrypt.",
+        "category": "tools",
+        "icon": "keys",
+        "author": "IDRIX",
+        "homepage": "https://veracrypt.io",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "IDRIX.VeraCrypt"
+            }
+        ]
+    },
+    {
+        "id": "syncthing",
+        "name": "Syncthing",
+        "description": "Continuous peer-to-peer file synchronization between your devices — no central cloud server involved.",
+        "category": "apps",
+        "icon": "p2p",
+        "author": "Syncthing Foundation",
+        "homepage": "https://syncthing.net",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Syncthing.Syncthing"
+            }
+        ]
+    },
+    {
+        "id": "cryptomator",
+        "name": "Cryptomator",
+        "description": "Transparent client-side encryption for your cloud storage vaults (Dropbox, Google Drive, OneDrive and more).",
+        "category": "apps",
+        "icon": "keys",
+        "author": "Skymatic",
+        "homepage": "https://cryptomator.org",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Cryptomator.Cryptomator"
+            }
+        ]
+    },
+    {
+        "id": "bitwarden",
+        "name": "Bitwarden",
+        "description": "Secure open-source password manager for all your devices, with free sync and optional self-hosting.",
+        "category": "apps",
+        "icon": "keys",
+        "author": "Bitwarden",
+        "homepage": "https://bitwarden.com",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Bitwarden.Bitwarden"
+            }
+        ]
+    },
+    {
+        "id": "simplewall",
+        "name": "simplewall",
+        "description": "Lightweight front-end for Windows Filtering Platform that lets you control which apps can access the network.",
+        "category": "tools",
+        "icon": "shield",
+        "author": "henrypp",
+        "homepage": "https://github.com/henrypp/simplewall",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "Henry++.simplewall"
+            }
+        ]
+    },
+    {
+        "id": "librehardwaremonitor",
+        "name": "LibreHardwareMonitor",
+        "description": "Monitors temperatures, fan speeds, voltages, load and clock speeds of your hardware.",
+        "category": "tools",
+        "icon": "computer",
+        "author": "LibreHardwareMonitor",
+        "homepage": "https://github.com/LibreHardwareMonitor/LibreHardwareMonitor",
+        "install_methods": [
+            {
+                "type": "direct_download",
+                "label": "Portable",
+                "url": "https://github.com/LibreHardwareMonitor/LibreHardwareMonitor/releases/latest/download/LibreHardwareMonitor.zip",
+                "filename": "LibreHardwareMonitor.zip",
+                "needs_extraction": true,
+                "executable_path": "LibreHardwareMonitor.exe"
+            },
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "LibreHardwareMonitor.LibreHardwareMonitor"
+            }
+        ]
+    },
+    {
+        "id": "compactgui",
+        "name": "CompactGUI",
+        "description": "Shrinks games and programs using Windows' built-in transparent NTFS compression, saving gigabytes with no performance loss.",
+        "category": "tools",
+        "icon": "fragment",
+        "author": "IridiumIO",
+        "homepage": "https://github.com/IridiumIO/CompactGUI",
+        "install_methods": [
+            {
+                "type": "direct_download",
+                "label": "Installer",
+                "url": "https://github.com/IridiumIO/CompactGUI/releases/latest/download/CompactGUI.exe",
+                "filename": "CompactGUI.exe"
+            },
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "IridiumIO.CompactGUI"
+            }
+        ]
+    },
+    {
+        "id": "configuredefender",
+        "name": "ConfigureDefender",
+        "description": "Configures Microsoft Defender settings — including Attack Surface Reduction rules — that the Settings app doesn't expose.",
+        "category": "tools",
+        "icon": "shield",
+        "author": "AndyFul",
+        "homepage": "https://github.com/AndyFul/ConfigureDefender",
+        "install_methods": [
+            {
+                "type": "direct_download",
+                "label": "Installer",
+                "url": "https://github.com/AndyFul/ConfigureDefender/raw/master/ConfigureDefender.exe",
+                "filename": "ConfigureDefender.exe"
+            },
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "AndyFul.ConfigureDefender"
+            }
+        ]
+    },
+    {
+        "id": "snappy_driver_installer_origin",
+        "name": "Snappy Driver Installer Origin",
+        "description": "Offline-friendly driver installer using community driver packs, with restore-point creation before changes.",
+        "category": "tools",
+        "icon": "build",
+        "author": "Glenn Delahoy",
+        "homepage": "https://www.snappy-driver-installer.org",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "GlennDelahoy.SnappyDriverInstallerOrigin"
+            }
+        ]
+    },
+    {
+        "id": "geek_uninstaller",
+        "name": "Geek Uninstaller",
+        "description": "Small portable uninstaller with a deep leftover scan and Force Removal for stubborn programs.",
+        "category": "cleaners",
+        "icon": "cleaning_services",
+        "author": "GeekUninstaller",
+        "homepage": "https://geekuninstaller.com",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "GeekUninstaller.GeekUninstaller"
+            }
+        ]
+    },
+    {
+        "id": "revo_uninstaller",
+        "name": "Revo Uninstaller Free",
+        "description": "Uninstaller that scans before and after removal to catch leftover files, folders and registry entries.",
+        "category": "cleaners",
+        "icon": "cleaning_services",
+        "author": "VS Revo Group",
+        "homepage": "https://www.revouninstaller.com",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "RevoUninstaller.RevoUninstaller"
+            }
+        ]
+    },
+    {
+        "id": "openrgb",
+        "name": "OpenRGB",
+        "description": "Controls RGB lighting across 78+ manufacturers in one app — replaces the pile of vendor lighting bloatware.",
+        "category": "customization",
+        "icon": "paint",
+        "author": "OpenRGB",
+        "homepage": "https://openrgb.org",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "OpenRGB.OpenRGB"
+            }
+        ]
+    },
+    {
+        "id": "glazewm",
+        "name": "GlazeWM",
+        "description": "Tiling window manager for Windows with configurable keybindings and workspaces, inspired by i3 and Hyprland.",
+        "category": "customization",
+        "icon": "windows",
+        "author": "glzr-io",
+        "homepage": "https://github.com/glzr-io/glazewm",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "glzr-io.glazewm"
+            }
+        ]
+    },
+    {
+        "id": "yt_dlp",
+        "name": "yt-dlp",
+        "description": "Command-line audio and video downloader for hundreds of sites, the maintained successor to youtube-dl.",
+        "category": "tools",
+        "icon": "download",
+        "author": "yt-dlp contributors",
+        "homepage": "https://github.com/yt-dlp/yt-dlp",
+        "install_methods": [
+            {
+                "type": "direct_download",
+                "label": "Executable",
+                "url": "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe",
+                "filename": "yt-dlp.exe"
+            }
+        ]
+    },
+    {
+        "id": "peazip",
+        "name": "PeaZip",
+        "description": "Free archive manager supporting 200+ formats, with strong encryption and archive conversion.",
+        "category": "apps",
+        "icon": "box",
+        "author": "Giorgio Tani",
+        "homepage": "https://peazip.github.io",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "GiorgioTani.Peazip"
+            }
+        ]
+    },
+    {
+        "id": "eartrumpet",
+        "name": "EarTrumpet",
+        "description": "Per-application volume control flyout for the Windows taskbar, with per-device routing and hotkeys.",
+        "category": "customization",
+        "icon": "music",
+        "author": "File-New-Project",
+        "homepage": "https://eartrumpet.app",
+        "install_methods": [
+            {
+                "type": "microsoft_store",
+                "label": "Install via Microsoft Store",
+                "store_id": "9nblggh516xp"
+            }
+        ]
+    },
+    {
+        "id": "twinkle_tray",
+        "name": "Twinkle Tray",
+        "description": "Per-monitor brightness control from the system tray using DDC/CI and WMI, with hotkeys and schedules.",
+        "category": "customization",
+        "icon": "wallpaper",
+        "author": "xanderfrangos",
+        "homepage": "https://twinkletray.com",
+        "install_methods": [
+            {
+                "type": "microsoft_store",
+                "label": "Install via Microsoft Store",
+                "store_id": "9pljwwsv01lk"
+            }
+        ]
+    },
+    {
+        "id": "open_shell",
+        "name": "Open-Shell",
+        "description": "Classic-style Start menu for Windows 10/11, plus an Explorer toolbar and status bar, successor to Classic Shell.",
+        "category": "customization",
+        "icon": "windows",
+        "author": "Open-Shell Team",
+        "homepage": "https://github.com/Open-Shell/Open-Shell-Menu",
+        "install_methods": [
+            {
+                "type": "web_link",
+                "label": "Open in Browser",
+                "url": "https://github.com/Open-Shell/Open-Shell-Menu/releases"
+            }
+        ]
+    },
+    {
+        "id": "tron",
+        "name": "Tron",
+        "description": "Batch suite that automates disinfecting, cleaning, de-bloating and repairing a Windows PC. Official downloads live in the TronScript subreddit's pinned post — mirrors elsewhere are unofficial.",
+        "category": "tools",
+        "icon": "kit",
+        "author": "vocatus",
+        "homepage": "https://old.reddit.com/r/TronScript/",
+        "install_methods": [
+            {
+                "type": "web_link",
+                "label": "Open in Browser",
+                "url": "https://old.reddit.com/r/TronScript/"
+            }
+        ]
+    },
+    {
+        "id": "crapfixer",
+        "name": "CrapFixer",
+        "description": "Signature-driven tweaker: scans your Windows settings against a database of known annoyances and fixes what's off.",
+        "category": "debloat",
+        "icon": "build",
+        "author": "builtbybel",
+        "homepage": "https://github.com/builtbybel/CrapFixer",
+        "install_methods": [
+            {
+                "type": "web_link",
+                "label": "Open in Browser",
+                "url": "https://github.com/builtbybel/CrapFixer/releases"
+            }
+        ]
+    },
+    {
+        "id": "sparkle",
+        "name": "Sparkle",
+        "description": "Windows optimizer with 40+ reversible tweaks, a cleaner, DNS manager, app installer and restore-point support (currently in beta).",
+        "category": "debloat",
+        "icon": "rocket",
+        "author": "thedogecraft",
+        "homepage": "https://github.com/thedogecraft/sparkle",
+        "install_methods": [
+            {
+                "type": "powershell",
+                "label": "Launch Application",
+                "command": "irm https://getsparkle.net/get | iex"
+            }
+        ]
+    },
+    {
+        "id": "w10privacy",
+        "name": "W10Privacy",
+        "description": "Privacy-settings manager covering telemetry, services, scheduled tasks, firewall rules and app permissions.",
+        "category": "debloat",
+        "icon": "shield",
+        "author": "Bernd Schuster",
+        "homepage": "https://www.w10privacy.de",
+        "install_methods": [
+            {
+                "type": "web_link",
+                "label": "Open in Browser",
+                "url": "https://www.w10privacy.de/"
+            }
+        ]
+    },
+    {
+        "id": "imageglass",
+        "name": "ImageGlass",
+        "description": "Lightweight, fast image viewer supporting 80+ formats including WebP, HEIC, AVIF and RAW.",
+        "category": "apps",
+        "icon": "wallpaper",
+        "author": "Duong Dieu Phap",
+        "homepage": "https://imageglass.org",
+        "install_methods": [
+            {
+                "type": "winget",
+                "label": "Install via Winget",
+                "package_id": "DuongDieuPhap.ImageGlass"
+            }
+        ]
+    },
+    {
+        "id": "hard_configurator",
+        "name": "Hard_Configurator",
+        "description": "Hardens Windows Home and Pro using Software Restriction Policies and hardened OS settings, tuned for home users.",
+        "category": "debloat",
+        "icon": "shield",
+        "author": "AndyFul",
+        "homepage": "https://github.com/AndyFul/Hard_Configurator",
+        "install_methods": [
+            {
+                "type": "web_link",
+                "label": "Open in Browser",
+                "url": "https://github.com/AndyFul/Hard_Configurator"
             }
         ]
     }
