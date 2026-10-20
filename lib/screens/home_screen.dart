@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Only auto-check if the setting is enabled
     if (settings.autoUpdate) {
       update.checkForUpdate(
-        owner: 'nyxiereal',
+        owner: 'SeanShaffer88',
         repo: 'xtoolbox',
         currentVersion: _appVersion ?? '0.0.0',
       );
@@ -152,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: update.checking
                             ? null
                             : () => update.checkForUpdate(
-                                owner: 'nyxiereal',
+                                owner: 'SeanShaffer88',
                                 repo: 'xtoolbox',
                                 currentVersion: _appVersion ?? '0.0.0',
                                 force: true,
@@ -164,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         TextButton(
                           onPressed: () async {
                             final uri = Uri.parse(
-                              'https://github.com/nyxiereal/xtoolbox/releases/latest',
+                              'https://github.com/SeanShaffer88/XToolbox/releases/latest',
                             );
                             if (await canLaunchUrl(uri)) {
                               await launchUrl(uri);

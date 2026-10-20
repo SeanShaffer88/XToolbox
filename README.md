@@ -1,20 +1,13 @@
-# END OF LIFE
-
-XToolBox has reached the end of its journey.
-
-I am the only developer behind this project. A few years ago, I switched to Linux full-time. I no longer use Windows, and I have no desire to maintain an application for a platform I do not use.
-
-The source code will remain available, but there will be no further updates, bug fixes, or support.
-
-Thank you for using XToolBox over the last 4 years.
-
 # XToolBox
-A toolbox full of Windows 10/11 debloating utilities.  
-Made by [Nyx](https://nyx.meowery.eu).
+A toolbox full of Windows 10/11 utilities: run AME Wizard playbooks (AtlasOS, ReviOS, AME), install curated software, clean up your system, and check system info — all from one app.  
+Originally made by [Nyx](https://nyx.meowery.eu).
+
+> [!NOTE]
+> **XToolBox lives on.** The original project reached end-of-life in May 2026 when its author moved to Linux full-time. This fork, maintained by [SeanShaffer88](https://github.com/SeanShaffer88), continues development: updates, fixes, and new tools are published here. The in-app update checker points at this repository, so releases from here reach you automatically. Huge thanks to Nyx and all past contributors for four years of work.
 
 ## 🚀 Quickstart
 >[!TIP]
-> [You can click here to download the latest XTBox zip.](https://github.com/nyxiereal/XToolbox/releases/latest/download/XTBox.zip)  
+> [You can click here to download the latest XTBox zip.](https://github.com/SeanShaffer88/XToolbox/releases/latest/download/XTBox.zip)  
 1. Go to the releases tab.
 2. Click on the `XTBox.zip` file attached to the latest release.
 3. Unpack the folder and run the `xtoolbox.exe` file.
@@ -67,7 +60,7 @@ Made by [Nyx](https://nyx.meowery.eu).
 ## ⚒️ Building
 - The building process requires [Flutter](https://docs.flutter.dev/get-started/quick) and [Git](https://git-scm.com/downloads)
 ```
-git clone https://github.com/nyxiereal/XToolbox
+git clone https://github.com/SeanShaffer88/XToolbox
 cd XToolbox
 flutter pub get
 flutter build windows --release
@@ -77,11 +70,11 @@ cd build/windows/x64/runner/Release
 > You have to zip up the entire Release folder, not only the `xtoolbox.exe` file!
 
 ## 🔗 Links
-<a href="https://star-history.com/#nyxiereal/xtoolbox&Date">
+<a href="https://star-history.com/#SeanShaffer88/xtoolbox&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=nyxiereal/xtoolbox&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=nyxiereal/xtoolbox&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=nyxiereal/xtoolbox&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=SeanShaffer88/xtoolbox&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=SeanShaffer88/xtoolbox&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=SeanShaffer88/xtoolbox&type=Date" />
  </picture>
 </a>
 

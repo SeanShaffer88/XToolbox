@@ -66,8 +66,7 @@ class Playbook {
       name: 'AtlasOS v0.5.0',
       description: 'Atlas Playbook - Performance-focused Windows configuration',
       downloadUrl:
-          'https://cdn.jsdelivr.net/atlas/0.5.0-hotfix/AtlasPlaybook_v0.5.0-hotfix.zip',
-      isZipArchive: true,
+          'https://github.com/Atlas-OS/Atlas/releases/download/0.5.0-hotfix/AtlasPlaybook_v0.5.0-hotfix.apbx',
     ),
   ];
 }

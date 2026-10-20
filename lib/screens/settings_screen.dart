@@ -126,9 +126,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _launchGitHub() async {
-    final uri = Uri.parse(
-      'https://github.com/nyxiereal/XToolbox',
-    ); // Update with actual repo
+    final uri = Uri.parse('https://github.com/SeanShaffer88/XToolbox');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
