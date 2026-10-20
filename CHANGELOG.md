@@ -22,6 +22,12 @@ Catalog expansion: 77 → 133 tools, broken downloads repaired, two new playbook
 
 ### Fixed
 
+- Internal code health: every analyzer lint resolved — the deprecated
+  Radio APIs migrated to `RadioGroup`, the install-preference list to
+  `onReorderItem`, and the playbook run flow now checks the right context
+  after async gaps. `flutter analyze` reports no issues at all, and a
+  permanent catalog parse test (`test/catalog_parse_test.dart`) means a
+  malformed catalog entry fails CI instead of silently disappearing.
 - 11 catalog entries with broken downloads:
   - Rufus, PowerToys, KeePassXC, PowerShell 7, Alacritty and ATLauncher now
     install via Winget instead of version-pinned URLs that had gone stale.

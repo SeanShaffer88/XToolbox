@@ -38,14 +38,14 @@ Run these before opening a pull request. The CI workflow
 request:
 
 ```
-dart format lib/                       # the codebase is dart-format clean
-flutter analyze --no-fatal-infos       # errors and warnings must be zero
-flutter build windows --release        # or the linux build, if that's your OS
+dart format lib/ test/                  # the codebase is dart-format clean
+flutter analyze                         # zero issues — errors, warnings, infos
+flutter test                            # includes the catalog parse test
+flutter build windows --release         # or the linux build, if that's your OS
 ```
 
-`--no-fatal-infos` exists because the codebase carries a small number of
-pre-existing info-level lints (mostly deprecated Radio APIs in the playbook
-setup screen). New code must not add errors, warnings, or new infos.
+The analyzer is expected to report **no issues at all**. If your change
+introduces a lint, fix the code rather than suppressing it.
 
 ## Adding a tool to the catalog
 
