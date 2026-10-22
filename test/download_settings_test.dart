@@ -154,6 +154,7 @@ void _downloadHelpersTests() {
       expect(DownloadService.sanitizeFilename('..'), 'download');
       expect(DownloadService.sanitizeFilename('CON'), '_CON');
       expect(DownloadService.sanitizeFilename('lpt1.txt'), '_lpt1.txt');
+      expect(DownloadService.sanitizeFilename('name. '), 'name');
     });
   });
 

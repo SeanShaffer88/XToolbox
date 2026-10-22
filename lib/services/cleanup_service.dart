@@ -377,7 +377,8 @@ class CleanupService {
   Future<CleanupOutcome> _emptyRecycleBin(CleanupTarget target) async {
     final before = await _recycleBinBytes();
     final result = await _runPowerShell(
-      r'Clear-RecycleBin -Force -ErrorAction SilentlyContinue',
+      r'try { Clear-RecycleBin -Force -ErrorAction Stop } '
+      r'catch { [Console]::Error.WriteLine($_.Exception.Message); exit 1 }',
     );
     if (result == null) {
       return _failure(target, 'PowerShell is unavailable.');
@@ -395,6 +396,13 @@ class CleanupService {
     final freed = before != null && after != null && before > after
         ? before - after
         : 0;
+    if (before != null && after != null && before > 0 && after >= before) {
+      return _failure(
+        target,
+        'The Recycle Bin still contains items after cleanup. It may be in '
+        'use by another program.',
+      );
+    }
     return CleanupOutcome(
       target: target,
       success: true,

@@ -84,7 +84,11 @@ class DownloadService {
   static String sanitizeFilename(String name) {
     final withoutQuery = name.split('?').first.split('#').first;
     final baseName = withoutQuery.replaceAll('\\', '/').split('/').last.trim();
-    final cleaned = baseName.replaceAll(RegExp(r'[<>:"/\\|?*\x00-\x1F]'), '_');
+    var cleaned = baseName.replaceAll(
+      RegExp(r'[<>:"/\\|?*\x00-\x1F]'),
+      '_',
+    );
+    cleaned = cleaned.replaceAll(RegExp(r'[. ]+$'), '');
     if (cleaned.isEmpty || cleaned == '.' || cleaned == '..') {
       return 'download';
     }
