@@ -5,7 +5,7 @@ on:
     branches: [arena/2b8c5dee-xtoolbox]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   format:
@@ -16,12 +16,15 @@ jobs:
         with:
           channel: stable
           cache: true
-      - name: Format
-        run: dart format lib/ test/
-      - name: Package formatted sources
-        run: zip -r formatted.zip lib test
-      - uses: actions/upload-artifact@v4
-        with:
-          name: formatted
-          path: formatted.zip
-          if-no-files-found: error
+      - name: Format and commit
+        run: |
+          dart format lib/ test/
+          if git diff --quiet; then
+            echo "Sources are already formatted."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lib test
+          git commit -m "chore: apply dart format"
+          git push
