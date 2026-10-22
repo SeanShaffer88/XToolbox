@@ -8,6 +8,8 @@ import 'package:xml/xml.dart';
 
 import '../models/playbook.dart';
 import '../utils/archive_extraction.dart';
+import 'download_service.dart';
+import 'settings_service.dart';
 import 'toast_notification_service.dart';
 
 enum PlaybookStatus {
@@ -24,6 +26,7 @@ enum PlaybookStatus {
 
 class PlaybookService extends ChangeNotifier {
   final ToastNotificationService _toastService;
+  final SettingsService? _settingsService;
 
   PlaybookStatus _status = PlaybookStatus.idle;
   String _statusMessage = '';
@@ -45,7 +48,25 @@ class PlaybookService extends ChangeNotifier {
   static const String sevenZipDownloadUrl =
       'https://www.7-zip.org/a/7zr.exe'; // Standalone 7-Zip executable
 
-  PlaybookService(this._toastService);
+  PlaybookService(this._toastService, [this._settingsService]);
+
+  /// Throws when [url] is disallowed by the HTTPS-only download
+  /// setting, so the setting holds for every download the app makes —
+  /// not just catalog installs (which DownloadService already guards).
+  @visibleForTesting
+  static void ensureDownloadAllowed(String url, {required bool httpsOnly}) {
+    if (!DownloadService.isUrlAllowed(url, httpsOnly: httpsOnly)) {
+      throw Exception(
+        'HTTPS-only mode is on, but this download is not HTTPS: $url',
+      );
+    }
+  }
+
+  /// Fetches [url] after enforcing the HTTPS-only download setting.
+  Future<http.Response> _fetch(String url) {
+    ensureDownloadAllowed(url, httpsOnly: _settingsService?.httpsOnly ?? false);
+    return http.get(Uri.parse(url));
+  }
 
   Future<String> get _workingDirectory async {
     final appDir = await getApplicationSupportDirectory();
@@ -188,7 +209,7 @@ class PlaybookService extends ChangeNotifier {
       progress: 0.1,
     );
 
-    final response = await http.get(Uri.parse(cliDownloadUrl));
+    final response = await _fetch(cliDownloadUrl);
     if (response.statusCode != 200) {
       throw Exception('Failed to download CLI: ${response.statusCode}');
     }
@@ -231,7 +252,7 @@ class PlaybookService extends ChangeNotifier {
       progress: 0.5,
     );
 
-    final response = await http.get(Uri.parse(playbook.downloadUrl));
+    final response = await _fetch(playbook.downloadUrl);
     if (response.statusCode != 200) {
       throw Exception('Failed to download playbook: ${response.statusCode}');
     }
@@ -513,7 +534,7 @@ class PlaybookService extends ChangeNotifier {
     final workDir = await _workingDirectory;
     final sevenZipExe = '$workDir/7zr.exe';
     if (!await File(sevenZipExe).exists()) {
-      final response = await http.get(Uri.parse(sevenZipDownloadUrl));
+      final response = await _fetch(sevenZipDownloadUrl);
       if (response.statusCode != 200) {
         throw Exception('Failed to download 7-Zip: ${response.statusCode}');
       }
