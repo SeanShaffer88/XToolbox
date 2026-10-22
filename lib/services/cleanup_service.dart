@@ -649,13 +649,7 @@ class CleanupService {
     final sizes = _Sizes();
     if (!await directory.exists()) return sizes;
 
-    List<FileSystemEntity> entries;
-    try {
-      entries = await directory.list(followLinks: false).toList();
-    } on FileSystemException {
-      return sizes;
-    }
-
+    final entries = await directory.list(followLinks: false).toList();
     for (final entry in entries) {
       final measured = await _measureEntity(entry);
       try {

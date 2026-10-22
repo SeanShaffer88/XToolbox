@@ -487,7 +487,7 @@ class PlaybookService extends ChangeNotifier {
       '-o$outputDir', // Output directory
       archivePath, // Input archive
       '-y', // Yes to all prompts
-    ], runInShell: true);
+    ]);
 
     if (result.exitCode != 0) {
       throw Exception(
@@ -559,7 +559,6 @@ class PlaybookService extends ChangeNotifier {
       command,
       args,
       workingDirectory: '$workDir/CLI-Standalone',
-      runInShell: true,
     );
 
     final output = StringBuffer();
