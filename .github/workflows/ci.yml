@@ -7,9 +7,16 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   analyze:
-    name: Analyze and format check
+    name: Analyze, format check and tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,14 +27,41 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       - name: Format check
-        run: dart format --output=none --set-exit-if-changed lib/ test/
+        run: |
+          if ! dart format --output=none --set-exit-if-changed lib/ test/; then
+            dart format lib/ test/ > /dev/null
+            git diff --name-only | while read -r file; do
+              echo "::error file=$file::This file needs dart format"
+            done
+            exit 1
+          fi
       - name: Analyze
         run: flutter analyze
       - name: Test
         run: flutter test
 
+  build-linux:
+    name: Build Linux release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config \
+            libgtk-3-dev liblzma-dev libblkid-dev
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Build Linux release
+        run: flutter build linux --release
+
   build-windows:
     name: Build Windows release
+    needs: [analyze, build-linux]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: windows-latest
     permissions:
@@ -38,6 +72,14 @@ jobs:
         with:
           channel: stable
           cache: true
+      - name: Verify the tag matches pubspec.yaml
+        shell: pwsh
+        run: |
+          $line = Select-String -Path pubspec.yaml -Pattern '^version:\s*(.+)$'
+          $version = $line.Matches.Groups[1].Value.Trim()
+          if ("v$version" -ne "${{ github.ref_name }}") {
+            throw "Tag ${{ github.ref_name }} does not match pubspec version $version"
+          }
       - name: Install dependencies
         run: flutter pub get
       - name: Build Windows release

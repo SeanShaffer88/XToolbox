@@ -1,9 +1,11 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:archive/archive.dart';
 import 'package:xml/xml.dart';
+
 import '../models/playbook.dart';
 import '../utils/archive_extraction.dart';
 import 'toast_notification_service.dart';
@@ -476,34 +478,48 @@ class PlaybookService extends ChangeNotifier {
     String outputDir,
     String password,
   ) async {
-    // .apbx files are 7-Zip archives, not standard ZIP
-    // Download 7zr.exe if not present
-    final workDir = await _workingDirectory;
-    final sevenZipExe = '$workDir\\7zr.exe';
+    // .apbx files are 7-Zip archives, not standard ZIP.
+    final sevenZip = await _sevenZipExecutable();
 
-    if (!await File(sevenZipExe).exists()) {
-      // Download 7-Zip standalone executable
-      final response = await http.get(Uri.parse(sevenZipDownloadUrl));
-      if (response.statusCode != 200) {
-        throw Exception('Failed to download 7-Zip: ${response.statusCode}');
-      }
-      await File(sevenZipExe).writeAsBytes(response.bodyBytes);
-    }
-
-    // Use 7zr.exe to extract the password-protected archive
-    final result = await Process.run(sevenZipExe, [
+    final result = await Process.run(sevenZip, [
       'x', // Extract with full paths
       '-p$password', // Password
       '-o$outputDir', // Output directory
       archivePath, // Input archive
       '-y', // Yes to all prompts
-    ], runInShell: true);
+    ]);
 
     if (result.exitCode != 0) {
       throw Exception(
         'Failed to extract archive: ${result.stderr}\n${result.stdout}',
       );
     }
+  }
+
+  /// Windows uses the bundled standalone 7zr.exe; other platforms use the
+  /// system 7-Zip binary when one is installed.
+  Future<String> _sevenZipExecutable() async {
+    if (!Platform.isWindows) {
+      for (final candidate in ['7z', '7za']) {
+        final probe = await Process.run('which', [candidate]);
+        if (probe.exitCode == 0) return candidate;
+      }
+      throw Exception(
+        '7-Zip is required to extract playbooks on this platform. '
+        'Install p7zip (the 7z command) and try again.',
+      );
+    }
+
+    final workDir = await _workingDirectory;
+    final sevenZipExe = '$workDir/7zr.exe';
+    if (!await File(sevenZipExe).exists()) {
+      final response = await http.get(Uri.parse(sevenZipDownloadUrl));
+      if (response.statusCode != 200) {
+        throw Exception('Failed to download 7-Zip: ${response.statusCode}');
+      }
+      await File(sevenZipExe).writeAsBytes(response.bodyBytes);
+    }
+    return sevenZipExe;
   }
 
   Future<void> _runCLI(String playbookDir, List<String> options) async {
@@ -543,7 +559,6 @@ class PlaybookService extends ChangeNotifier {
       command,
       args,
       workingDirectory: '$workDir/CLI-Standalone',
-      runInShell: true,
     );
 
     final output = StringBuffer();

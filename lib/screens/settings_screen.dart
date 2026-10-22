@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../services/settings_service.dart';
 import '../utils/theme_provider.dart';
 
@@ -191,27 +192,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SizedBox(height: 16),
                   Consumer<ThemeProvider>(
                     builder: (context, themeProvider, _) {
-                      return SwitchListTile(
+                      final mode = themeProvider.themeMode;
+                      return ListTile(
                         contentPadding: EdgeInsets.zero,
-                        title: const Text('Dark Mode'),
-                        subtitle: Text(
-                          themeProvider.themeMode == ThemeMode.system
-                              ? 'Following system theme'
-                              : themeProvider.isDarkMode
-                              ? 'Dark theme enabled'
-                              : 'Light theme enabled',
-                        ),
-                        secondary: Icon(
-                          themeProvider.isDarkMode
+                        leading: Icon(
+                          mode == ThemeMode.system
+                              ? Icons.brightness_auto
+                              : mode == ThemeMode.dark
                               ? Icons.dark_mode
                               : Icons.light_mode,
                         ),
-                        value: themeProvider.themeMode == ThemeMode.dark,
-                        onChanged: (value) {
-                          themeProvider.setThemeMode(
-                            value ? ThemeMode.dark : ThemeMode.light,
-                          );
-                        },
+                        title: const Text('Theme'),
+                        subtitle: Text(
+                          mode == ThemeMode.system
+                              ? 'Following the system theme'
+                              : mode == ThemeMode.dark
+                              ? 'Always dark'
+                              : 'Always light',
+                        ),
+                        trailing: DropdownButton<ThemeMode>(
+                          value: mode,
+                          onChanged: (value) {
+                            if (value != null) {
+                              themeProvider.setThemeMode(value);
+                            }
+                          },
+                          items: const [
+                            DropdownMenuItem(
+                              value: ThemeMode.system,
+                              child: Text('System'),
+                            ),
+                            DropdownMenuItem(
+                              value: ThemeMode.light,
+                              child: Text('Light'),
+                            ),
+                            DropdownMenuItem(
+                              value: ThemeMode.dark,
+                              child: Text('Dark'),
+                            ),
+                          ],
+                        ),
                       );
                     },
                   ),

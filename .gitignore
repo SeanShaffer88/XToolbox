@@ -6,5 +6,6 @@ build
 .dart_tool/package_graph.json
 *dart_tool*
 *.py*
-linux/*
-windows/*
+# Generated platform plugin/build output
+linux/flutter/ephemeral/
+windows/flutter/ephemeral/

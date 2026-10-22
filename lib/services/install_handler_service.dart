@@ -1,7 +1,9 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:process_run/shell.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import 'toast_notification_service.dart';
 import 'download_service.dart';
 import '../models/asset.dart';
@@ -85,82 +87,118 @@ class InstallHandlerService {
       message: 'Starting download...',
     );
 
+    // The archive is always extracted into the Downloads folder (or the
+    // configured download path). executable_path only selects the file
+    // inside that folder, so it must not be passed as the extract path.
     final result = await _downloadService.downloadFile(
       url: method.url!,
       displayName: appName,
       filename: method.filename,
       needsExtraction: method.needsExtraction,
-      extractPath: method.executablePath,
       autoComplete: false, // We'll handle the completion toast
     );
 
-    if (result != null) {
-      // Execute the downloaded file
+    if (result == null) {
       _toastService.updateNotification(
         id: toastId,
-        message: 'Launching installer...',
+        status: ToastStatus.error,
+        message:
+            'Download failed. See the download notification for the reason.',
       );
+      return InstallResult.failed;
+    }
 
-      try {
-        String executablePath;
+    _toastService.updateNotification(
+      id: toastId,
+      message: 'Preparing to launch...',
+    );
 
-        if (method.needsExtraction && method.executablePath != null) {
-          // If extracted, look for the executable in the extracted directory
-          executablePath = '$result/${method.executablePath}';
-        } else {
-          // Use the downloaded file directly
-          executablePath = result;
-        }
+    try {
+      final relativePath = method.needsExtraction
+          ? method.executablePath
+          : null;
+      final target = relativePath == null || relativePath.trim().isEmpty
+          ? result
+          : DownloadService.resolveExtractedPath(result, relativePath);
+      final type = await FileSystemEntity.type(target);
 
-        bool launched = false;
+      if (type == FileSystemEntityType.directory) {
+        // Some catalog entries download a folder of portable files or an
+        // image rather than a single program. Open the folder instead of
+        // pretending an executable was launched.
+        final opened = await _openDirectory(target, toastId);
+        _toastService.updateNotification(
+          id: toastId,
+          status: opened ? ToastStatus.success : ToastStatus.error,
+          message: opened
+              ? 'Extracted to $target'
+              : 'Extracted to $target, but the folder could not be opened.',
+        );
+        return opened ? InstallResult.success : InstallResult.failed;
+      }
 
-        if (Platform.isWindows) {
-          // On Windows, launch the installer. Files may be briefly locked by
-          // antivirus or the download process — retry a few times.
-          const maxAttempts = 5;
-          for (var attempt = 1; attempt <= maxAttempts; attempt++) {
-            launched = await _runCommand('start "" "$executablePath"', toastId);
-            if (launched) break;
-            // back off a bit before retrying
-            await Future.delayed(Duration(milliseconds: 200 * attempt));
-          }
-        } else {
-          // On Linux, make executable and run
-          final chmodOk = await _runCommand(
-            'chmod +x "$executablePath"',
-            toastId,
-          );
-          if (chmodOk) {
-            launched = await _runCommand('"$executablePath"', toastId);
-          }
-        }
-
-        if (launched) {
-          _toastService.updateNotification(
-            id: toastId,
-            status: ToastStatus.success,
-            message: 'Installer launched',
-          );
-          return InstallResult.success;
-        } else {
-          _toastService.updateNotification(
-            id: toastId,
-            status: ToastStatus.error,
-            message: 'Failed to launch installer after multiple attempts',
-          );
-          return InstallResult.failed;
-        }
-      } catch (e) {
+      if (type != FileSystemEntityType.file) {
         _toastService.updateNotification(
           id: toastId,
           status: ToastStatus.error,
-          message: 'Failed to launch installer: ${e.toString()}',
+          message:
+              'The download did not contain '
+              '${relativePath ?? 'a runnable file'}. '
+              'Files were extracted to $result.',
         );
         return InstallResult.failed;
       }
-    } else {
+
+      final launched = await _launchExecutable(target, toastId);
+      _toastService.updateNotification(
+        id: toastId,
+        status: launched ? ToastStatus.success : ToastStatus.error,
+        message: launched
+            ? 'Installer launched'
+            : 'Failed to launch installer after multiple attempts',
+      );
+      return launched ? InstallResult.success : InstallResult.failed;
+    } on ArgumentError catch (e) {
+      _toastService.updateNotification(
+        id: toastId,
+        status: ToastStatus.error,
+        message: 'Invalid package path: ${e.message}',
+      );
+      return InstallResult.failed;
+    } on Exception catch (e) {
+      _toastService.updateNotification(
+        id: toastId,
+        status: ToastStatus.error,
+        message: 'Failed to launch installer: $e',
+      );
       return InstallResult.failed;
     }
+  }
+
+  Future<bool> _launchExecutable(String path, String toastId) async {
+    if (Platform.isWindows) {
+      // Files may be briefly locked by antivirus or the download process.
+      for (var attempt = 1; attempt <= 5; attempt++) {
+        final launched = await _runCommand('start "" "$path"', toastId);
+        if (launched) return true;
+        await Future.delayed(Duration(milliseconds: 200 * attempt));
+      }
+      return false;
+    }
+
+    final chmodOk = await _runCommand('chmod +x "$path"', toastId);
+    if (!chmodOk) return false;
+    return _runCommand('"$path"', toastId);
+  }
+
+  Future<bool> _openDirectory(String path, String toastId) async {
+    if (Platform.isWindows) {
+      return _runCommand('start "" "$path"', toastId);
+    }
+    if (Platform.isMacOS) {
+      return _runCommand('open "$path"', toastId);
+    }
+    return _runCommand('xdg-open "$path"', toastId);
   }
 
   Future<InstallResult> _handleWebLink(

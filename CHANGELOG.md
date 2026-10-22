@@ -5,6 +5,71 @@ All notable changes to XToolBox are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.0] - 2026-10-22
+
+Revival completion: the cleanup screen is finished, portable installs work,
+and downloads are safer.
+
+### Added
+
+- **Cleanup now does real work for every option it lists.** Temporary
+  files, old downloads, the Recycle Bin, browser caches, setup/update
+  logs, thumbnail cache and prefetch files are measured and removed with
+  per-item results. Files that are in use are counted as skipped instead
+  of being reported as freed. Options that need administrator rights ask
+  for elevation before anything runs.
+- **Old Downloads instead of the whole folder.** The cleanup option now
+  only removes files that have not changed in 30 days. A cleanup tool
+  should not silently wipe recent downloads.
+- A Theme selector with System, Light and Dark. Previously the dark-mode
+  switch could not return to following the system theme.
+- Cleanup, download-path and catalog extraction tests, and a Linux
+  release build in CI. The README's Linux-build claim is now checked on
+  every pull request.
+
+### Fixed
+
+- **Portable ZIP installs.** `executable_path` was passed to the download
+  service as the extraction destination, so entries such as G-Helper,
+  TranslucentTB, LibreHardwareMonitor, Cleanmgr+ and Winaero Tweaker
+  extracted into a folder named after the executable and then failed to
+  launch. Archives now extract into the download folder and the app
+  resolves and verifies the executable inside it. Missing files and
+  unsupported archive types produce a clear error with the extraction
+  path.
+- **Download integrity and cleanup.** Failed downloads no longer leave a
+  truncated installer behind. Remote file names are sanitized before
+  they become local paths. The explicit `Accept-Encoding: br` header was
+  removed: the HTTP client already negotiates and decodes compression,
+  and asking for Brotli could write compressed bytes to disk.
+- Playbook extraction now uses a platform-appropriate 7-Zip binary, and
+  playbooks without a `playbook.conf` can be run after initialization.
+- Toast notification ids are unique, so two notifications created in the
+  same millisecond no longer overwrite each other.
+- The package details dialog uses the full icon map and hides the
+  homepage button when an entry has no homepage.
+
+### Changed
+
+- Window metadata and titles use **XToolBox** instead of the lowercase
+  `xtoolbox`.
+- `linux/` and `windows/` are no longer gitignored; generated plugin and
+  build output is ignored inside those folders instead.
+- Catalog text cleanup: professional descriptions for the Windows
+  entries, fixed homepages and names, and the Windows 7/8.1 `.7z` images
+  are browser downloads because the app only extracts ZIP and TAR
+  archives.
+- The codebase is formatted with the current Dart formatter.
+
+### Verification
+
+- Verified by CI: `dart format`, `flutter analyze`, `flutter test`, and a
+  Linux release build.
+- The Windows release is built by CI from the tagged commit. Interactive
+  Windows runtime behavior is not re-validated by CI, so treat the
+  binary as **partially verified** until you have exercised the affected
+  screens on Windows.
+
 ## [5.2.2] - 2026-10-20
 
 ### Fixed

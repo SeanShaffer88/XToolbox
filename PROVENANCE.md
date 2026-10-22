@@ -4,7 +4,7 @@ Reviewed 2026-10-22 against this repository’s default branch, open PRs, parent
 
 **Identity:** Independent continuation. **Upstream:** [nyxiereal/XToolbox](https://github.com/nyxiereal/XToolbox).
 
-Default-branch changes cover catalog repair/expansion, archive extraction checks, download settings and CI. See [fork releases](https://github.com/SeanShaffer88/XToolbox/releases) for available packages. These historical source changes are not a fresh Windows runtime validation.
+Default-branch changes cover catalog repair/expansion, archive extraction checks, download settings, the system cleanup tools, portable-install fixes and CI. See [fork releases](https://github.com/SeanShaffer88/XToolbox/releases) for available packages. CI verifies formatting, static analysis, tests and the Linux build; Windows binaries are built by CI from tagged commits but their interactive runtime behavior is not re-validated there.
 
 Original authors retain credit. Existing LICENSE/NOTICE files and bundled-component terms govern their respective material; this document assigns no new license and grants no additional distribution permission.
 

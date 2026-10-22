@@ -35,8 +35,8 @@ flutter build windows --release
 
 Run these before opening a pull request. The CI workflow
 (`.github/workflows/ci.yml`) runs the format, analyze, and test gates on
-every push and pull request, and builds the Windows release from
-version tags:
+every push and pull request, builds the Linux release as a compile
+check, and builds the Windows release from version tags:
 
 ```
 dart format lib/ test/                  # the codebase is dart-format clean
@@ -93,7 +93,7 @@ Rules:
 
   | `type` | Required fields | Notes |
   | --- | --- | --- |
-  | `direct_download` | `url`, `filename` | Downloaded and launched. For `.zip` downloads set `needs_extraction: true` and `executable_path` to the `.exe` inside. Typical labels: `Installer`, `Portable`. |
+  | `direct_download` | `url`, `filename` | Downloaded and launched. For `.zip`, `.tar`, `.tar.gz` or `.tgz` downloads set `needs_extraction: true` and `executable_path` to the file or folder inside the archive. Other archive types (for example `.7z`) are not extracted by the app; use a `web_link` instead. Typical labels: `Installer`, `Portable`. |
   | `winget` | `package_id` | Label: `Install via Winget`. |
   | `microsoft_store` | `store_id` | The Store product ID (e.g. `9nghp3dx8hdx`). Label: `Install via Microsoft Store`. |
   | `powershell` | `command` | Run in PowerShell. Label: `Launch Application`. Only for commands the project itself publishes. |
@@ -143,5 +143,9 @@ automatically.
 
 - State lives in `lib/provider/`, long-running work in `lib/services/`,
   screens in `lib/screens/`, reusable UI in `lib/widgets/`.
+- Cleanup rules and the files each option may touch live in
+  `lib/services/cleanup_service.dart`. Add a test in
+  `test/cleanup_service_test.dart` for new path or deletion rules, and do
+  not offer an option that cannot actually run on the target platform.
 - The UI is Material 3 with dynamic color; keep new screens consistent
   with the existing ones.

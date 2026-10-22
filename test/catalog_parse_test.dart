@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xtoolbox/models/asset.dart';
+import 'package:xtoolbox/services/download_service.dart';
 
 /// Guards the catalog (assets/asset_list.json) against silent data loss.
 ///
@@ -52,6 +53,17 @@ void main() {
               isNotNull,
               reason: '${asset.id}: direct_download needs a filename',
             );
+            if (method.needsExtraction) {
+              expect(
+                DownloadService.supportsAutomaticExtraction(
+                  Uri.parse(method.url!).path,
+                ),
+                isTrue,
+                reason:
+                    '${asset.id}: needs_extraction requires a ZIP or TAR '
+                    'archive',
+              );
+            }
           case InstallType.winget:
           case InstallType.chocolatey:
           case InstallType.scoop:

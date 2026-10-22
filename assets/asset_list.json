@@ -773,11 +773,11 @@
     {
         "id": "windows_11",
         "name": "Windows 11",
-        "description": "The agentic operating system (LMAOOO)",
+        "description": "Windows 11 installation images, direct from Microsoft and the Massgrave mirror.",
         "category": "windows",
         "icon": "windows",
         "author": "Microsoft",
-        "homepage": "",
+        "homepage": "https://www.microsoft.com/software-download/windows11",
         "install_methods": [
             {
                 "type": "web_link",
@@ -795,11 +795,11 @@
     {
         "id": "windows_10",
         "name": "Windows 10",
-        "description": "The last good version of Windows, according to some. EOL in October 2025.",
+        "description": "Windows 10 installation images. Mainstream support ended in October 2025.",
         "category": "windows",
         "icon": "windows",
         "author": "Microsoft",
-        "homepage": "",
+        "homepage": "https://www.microsoft.com/software-download/windows10",
         "install_methods": [
             {
                 "type": "direct_download",
@@ -818,7 +818,7 @@
     {
         "id": "windows_81",
         "name": "Windows 8.1",
-        "description": "Windows 8 if it actually worked.",
+        "description": "Windows 8.1 installation images. Out of support since January 2023.",
         "category": "windows",
         "icon": "windows",
         "author": "Microsoft",
@@ -826,24 +826,21 @@
         "install_methods": [
             {
                 "type": "direct_download",
-                "label": "Windows 8.1",
+                "label": "Windows 8.1 x64",
                 "filename": "Windows8.1-x64.iso",
                 "url": "https://dl.bobpony.com/windows/8.x/8.1/en_windows_8.1_enterprise_with_update_x64_dvd_6054382.iso"
             },
             {
-                "type": "direct_download",
-                "label": "Windows 8.1",
-                "filename": "Windows8.1-x86.7z",
-                "url": "https://dl.bobpony.com/windows/8.x/8.1/en_windows_8.1_enterprise_with_update_x86_dvd_6050710.7z",
-                "needs_extraction": true,
-                "executable_path": "Windows 8.1"
+                "type": "web_link",
+                "label": "Windows 8.1 x86 (7z download)",
+                "url": "https://dl.bobpony.com/windows/8.x/8.1/en_windows_8.1_enterprise_with_update_x86_dvd_6050710.7z"
             }
         ]
     },
     {
         "id": "windows_8",
         "name": "Windows 8",
-        "description": "Windows 8",
+        "description": "Windows 8 installation images. Out of support since January 2016.",
         "category": "windows",
         "icon": "windows",
         "author": "Microsoft",
@@ -866,27 +863,21 @@
     {
         "id": "windows_7",
         "name": "Windows 7",
-        "description": "The classic Windows experience. EOL in January 2020.",
+        "description": "Windows 7 installation images. Out of support since January 2020.",
         "category": "windows",
         "icon": "windows",
         "author": "Microsoft",
         "homepage": "",
         "install_methods": [
             {
-                "type": "direct_download",
-                "label": "Windows 7 x64",
-                "filename": "Windows7-x64.7z",
-                "url": "https://dl.bobpony.com/windows/7/updated/7601.24214.180801-1700.win7sp1_ldr_escrow_CLIENT_PROFESSIONAL_x64FRE_en-us.7z",
-                "needs_extraction": true,
-                "executable_path": "Windows 7 x64"
+                "type": "web_link",
+                "label": "Windows 7 x64 (7z download)",
+                "url": "https://dl.bobpony.com/windows/7/updated/7601.24214.180801-1700.win7sp1_ldr_escrow_CLIENT_PROFESSIONAL_x64FRE_en-us.7z"
             },
             {
-                "type": "direct_download",
-                "label": "Windows 7 x86",
-                "filename": "Windows7-x86.7z",
-                "url": "https://dl.bobpony.com/windows/7/updated/7601.24214.180801-1700.win7sp1_ldr_escrow_CLIENT_PROFESSIONAL_x86FRE_en-us.7z",
-                "needs_extraction": true,
-                "executable_path": "Windows 7 x86"
+                "type": "web_link",
+                "label": "Windows 7 x86 (7z download)",
+                "url": "https://dl.bobpony.com/windows/7/updated/7601.24214.180801-1700.win7sp1_ldr_escrow_CLIENT_PROFESSIONAL_x86FRE_en-us.7z"
             }
         ]
     },
@@ -925,7 +916,7 @@
     {
         "id": "fido",
         "name": "Fido",
-        "description": "A PowerShell script to download Windows or UEFI Shell ISOs ",
+        "description": "A PowerShell script to download Windows or UEFI Shell ISOs.",
         "category": "windows",
         "icon": "download",
         "author": "Pete Batard",
@@ -1054,7 +1045,7 @@
         "category": "apps",
         "icon": "code",
         "author": "multiple",
-        "homepage": "",
+        "homepage": "https://code.visualstudio.com/",
         "install_methods": [
             {
                 "type": "direct_download",
@@ -1172,8 +1163,8 @@
     },
     {
         "id": "salwyrr_client",
-        "name": "Salwyrr CLient",
-        "description": "https://www.salwyrr.com/",
+        "name": "Salwyrr Client",
+        "description": "A Minecraft launcher distributed through Overwolf. The installer contains ads.",
         "category": "gaming",
         "icon": "box",
         "author": "Alexandre",
@@ -1190,11 +1181,11 @@
     {
         "id": "feather_launcher",
         "name": "Feather Launcher",
-        "description": "https://feathermc.com/",
+        "description": "A lightweight Minecraft launcher from Digital Ingot.",
         "category": "gaming",
         "icon": "box",
         "author": "Digital Ingot, Inc.",
-        "homepage": "https://feathermc.com/",
+        "homepage": "https://feather.gg/",
         "install_methods": [
             {
                 "type": "web_link",
@@ -1371,7 +1362,7 @@
     {
         "id": "jsruntimes",
         "name": "JavaScript Runtimes",
-        "description": "Choose between Node.js, Deno, and Bun ",
+        "description": "Choose between Node.js, Deno, and Bun.",
         "category": "runtimes",
         "icon": "code",
         "author": "Node, Deno, Bun",
@@ -1398,7 +1389,7 @@
     {
         "id": "python",
         "name": "Python",
-        "description": "https://python.org/",
+        "description": "Python interpreter, package manager and the uv toolchain.",
         "category": "runtimes",
         "icon": "code",
         "author": "The Python Software Foundation",
@@ -1480,7 +1471,7 @@
         "category": "gaming",
         "icon": "power",
         "author": "multiple",
-        "homepage": "",
+        "homepage": "https://discord.com/download",
         "install_methods": [
             {
                 "type": "direct_download",
@@ -1521,7 +1512,7 @@
         "category": "gaming",
         "icon": "power",
         "author": "multiple",
-        "homepage": "",
+        "homepage": "https://vencord.dev/",
         "install_methods": [
             {
                 "type": "direct_download",
