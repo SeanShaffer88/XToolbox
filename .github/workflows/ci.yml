@@ -27,7 +27,14 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       - name: Format check
-        run: dart format --output=none --set-exit-if-changed lib/ test/
+        run: |
+          if ! dart format --output=none --set-exit-if-changed lib/ test/; then
+            dart format lib/ test/ > /dev/null
+            git diff --name-only | while read -r file; do
+              echo "::error file=$file::This file needs dart format"
+            done
+            exit 1
+          fi
       - name: Analyze
         run: flutter analyze
       - name: Test
