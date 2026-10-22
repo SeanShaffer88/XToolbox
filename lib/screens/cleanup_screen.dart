@@ -183,7 +183,7 @@ class _CleanupScreenState extends State<CleanupScreen> {
           ? 'Freed ${CleanupService.formatBytes(freed)}'
           : '$failures of ${outcomes.length} options reported a problem',
       status: failures == 0 ? ToastStatus.success : ToastStatus.error,
-      progress: 1,
+      progress: 1.0,
     );
 
     if (!mounted) return;

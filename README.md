@@ -1,4 +1,6 @@
-> **Fork identity: independent continuation.** Derived from [nyxiereal/XToolbox](https://github.com/nyxiereal/XToolbox). Default-branch changes cover catalog repair/expansion, archive extraction checks, download settings and CI. See [fork releases](https://github.com/SeanShaffer88/XToolbox/releases) for available packages. These historical source changes are not a fresh Windows runtime validation. See [fork provenance](PROVENANCE.md) for ownership and reporting routes.
+> **Fork identity: independent continuation.** Derived from [nyxiereal/XToolbox](https://github.com/nyxiereal/XToolbox). Default-branch changes cover catalog repair/expansion, archive extraction checks, download settings, the system cleanup tools and CI. See [fork releases](https://github.com/SeanShaffer88/XToolbox/releases) for available packages.
+>
+> **Verification:** format, analyze and tests are run by CI, and CI builds the Linux target on every pull request. Windows release packages are built by CI from the tagged commit; interactive Windows runtime behavior is not re-validated by CI, so treat downloaded builds as **partially verified** until you have exercised the changed screens on Windows. See [fork provenance](PROVENANCE.md) for ownership and reporting routes.
 
 # XToolBox
 A toolbox full of Windows 10/11 utilities: run AME Wizard playbooks (AtlasOS, ReviOS, AME), install curated software, clean up your system, and check system info — all from one app.  
@@ -22,6 +24,7 @@ Originally made by [Nyx](https://nyx.meowery.eu).
     2. It's a compiled Dart (Flutter) binary, which some scanners distrust.
     3. The builds aren't code-signed yet, so Windows SmartScreen may also warn on first run — choose "More info" → "Run anyway".
 3. Running a playbook needs administrator rights (the app will offer to restart itself elevated) and Windows Defender Real-Time Protection turned off — playbooks can't run with it on. The app checks both and walks you through it before anything executes.
+4. System Cleanup permanently deletes files. Review the confirmation list before running it; files in use are reported as skipped. The Downloads option only removes files that have not changed in 30 days, and options that need administrator rights ask for elevation first.
 
 ## 📸 Screenshots
 <details>
@@ -74,7 +77,7 @@ Run `xtoolbox.exe` from that folder to test your build.
 >[!NOTE]
 > You have to zip up the entire Release folder, not only the `xtoolbox.exe` file!
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, checks, and how to add tools to the catalog.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, checks, and how to add tools to the catalog. CI runs the format/analyze/test gates and a Linux release build on every pull request, and builds the Windows release from `v*` tags.
 
 ## 🔗 Links
 <a href="https://star-history.com/#SeanShaffer88/xtoolbox&Date">
