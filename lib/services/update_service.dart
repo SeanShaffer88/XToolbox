@@ -115,5 +115,3 @@ class UpdateService extends ChangeNotifier {
     return false;
   }
 }
-
-// stub

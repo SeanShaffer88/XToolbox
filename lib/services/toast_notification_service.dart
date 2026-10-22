@@ -39,6 +39,7 @@ class ToastNotification {
 class ToastNotificationService extends ChangeNotifier {
   final List<ToastNotification> _notifications = [];
   final Map<String, DateTime> _completedToasts = {};
+  int _nextId = 0;
 
   List<ToastNotification> get notifications =>
       List.unmodifiable(_notifications);
@@ -49,7 +50,9 @@ class ToastNotificationService extends ChangeNotifier {
     ToastStatus status = ToastStatus.pending,
     double? progress,
   }) {
-    final id = DateTime.now().millisecondsSinceEpoch.toString();
+    // Two notifications can be created in the same millisecond (for
+    // example during a bulk install), so include a sequence number.
+    final id = '${DateTime.now().millisecondsSinceEpoch}-${_nextId++}';
     final notification = ToastNotification(
       id: id,
       title: title,

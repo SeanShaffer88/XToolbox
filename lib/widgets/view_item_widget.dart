@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/asset.dart';
 import '../services/install_handler_service.dart';
+import '../utils/iconmap_util.dart';
 
 class ViewItemWidget extends StatelessWidget {
   final Asset asset;
@@ -17,21 +18,6 @@ class ViewItemWidget extends StatelessWidget {
       barrierColor: Colors.black.withValues(alpha: 0.5),
       builder: (context) => ViewItemWidget(asset: asset),
     );
-  }
-
-  IconData getIconFromString(String iconName) {
-    switch (iconName) {
-      case 'delete_sweep':
-        return Icons.delete_sweep;
-      case 'wallpaper':
-        return Icons.wallpaper;
-      case 'code':
-        return Icons.code;
-      case 'computer':
-        return Icons.computer;
-      default:
-        return Icons.apps;
-    }
   }
 
   Future<void> _launchUrl(String url) async {
@@ -95,11 +81,12 @@ class ViewItemWidget extends StatelessWidget {
                         ),
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.open_in_new),
-                      tooltip: 'Open Homepage',
-                      onPressed: () => _launchUrl(asset.homepage),
-                    ),
+                    if (asset.homepage.isNotEmpty)
+                      IconButton(
+                        icon: const Icon(Icons.open_in_new),
+                        tooltip: 'Open Homepage',
+                        onPressed: () => _launchUrl(asset.homepage),
+                      ),
                     IconButton(
                       icon: const Icon(Icons.close),
                       tooltip: 'Close',

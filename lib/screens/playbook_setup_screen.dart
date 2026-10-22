@@ -15,6 +15,7 @@ class _PlaybookSetupScreenState extends State<PlaybookSetupScreen> {
   Playbook? _selectedPlaybook;
   final Map<String, bool> _selectedOptions = {};
   bool _isPreparingPlaybook = false;
+  bool _preparedPlaybook = false;
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +122,7 @@ class _PlaybookSetupScreenState extends State<PlaybookSetupScreen> {
                       setState(() {
                         _selectedPlaybook = value;
                         _selectedOptions.clear();
+                        _preparedPlaybook = false;
                       });
                       playbookService.reset();
                     },
@@ -135,6 +137,7 @@ class _PlaybookSetupScreenState extends State<PlaybookSetupScreen> {
                                   setState(() {
                                     _selectedPlaybook = playbook;
                                     _selectedOptions.clear();
+                                    _preparedPlaybook = false;
                                   });
                                   // Reset the service config when changing playbooks
                                   playbookService.reset();
@@ -191,7 +194,7 @@ class _PlaybookSetupScreenState extends State<PlaybookSetupScreen> {
                 // Load Options Button
                 if (_selectedPlaybook != null &&
                     playbookService.status == PlaybookStatus.idle &&
-                    playbookService.currentConfig == null) ...[
+                    !_preparedPlaybook) ...[
                   const SizedBox(height: 24),
                   Center(
                     child: FilledButton.icon(
@@ -611,8 +614,8 @@ class _PlaybookSetupScreenState extends State<PlaybookSetupScreen> {
                       child: FilledButton.icon(
                         onPressed:
                             _selectedPlaybook != null &&
-                                playbookService.status == PlaybookStatus.idle &&
-                                playbookService.currentConfig != null
+                                _preparedPlaybook &&
+                                playbookService.status == PlaybookStatus.idle
                             ? () => _runPlaybook(context)
                             : null,
                         icon: const Icon(Icons.play_arrow),
@@ -629,6 +632,7 @@ class _PlaybookSetupScreenState extends State<PlaybookSetupScreen> {
                           playbookService.reset();
                           setState(() {
                             _selectedOptions.clear();
+                            _preparedPlaybook = false;
                           });
                         },
                         icon: const Icon(Icons.refresh),
@@ -799,11 +803,12 @@ class _PlaybookSetupScreenState extends State<PlaybookSetupScreen> {
     });
 
     final playbookService = context.read<PlaybookService>();
-    await playbookService.preparePlaybook(_selectedPlaybook!);
+    final prepared = await playbookService.preparePlaybook(_selectedPlaybook!);
 
     if (mounted) {
       setState(() {
         _isPreparingPlaybook = false;
+        _preparedPlaybook = prepared != null;
       });
     }
   }

@@ -1,0 +1,27 @@
+name: Format helper
+
+on:
+  push:
+    branches: [arena/2b8c5dee-xtoolbox]
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Format
+        run: dart format lib/ test/
+      - name: Package formatted sources
+        run: zip -r formatted.zip lib test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: formatted
+          path: formatted.zip
+          if-no-files-found: error

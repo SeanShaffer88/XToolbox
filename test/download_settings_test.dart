@@ -118,4 +118,99 @@ void main() {
       );
     });
   });
+
+  _downloadHelpersTests();
+}
+
+void _downloadHelpersTests() {
+  group('DownloadService.sanitizeFilename', () {
+    test('keeps ordinary file names', () {
+      expect(
+        DownloadService.sanitizeFilename('CleanmgrPlus.zip'),
+        'CleanmgrPlus.zip',
+      );
+    });
+
+    test('strips paths and query strings', () {
+      expect(
+        DownloadService.sanitizeFilename('../../Windows/tool.exe?download=1'),
+        'tool.exe',
+      );
+      expect(
+        DownloadService.sanitizeFilename(r'C:\Temp\setup.exe'),
+        'setup.exe',
+      );
+    });
+
+    test('replaces characters Windows cannot store', () {
+      expect(
+        DownloadService.sanitizeFilename('bad:name*.exe'),
+        'bad_name_.exe',
+      );
+    });
+
+    test('falls back for empty and reserved names', () {
+      expect(DownloadService.sanitizeFilename(''), 'download');
+      expect(DownloadService.sanitizeFilename('..'), 'download');
+      expect(DownloadService.sanitizeFilename('CON'), '_CON');
+      expect(DownloadService.sanitizeFilename('lpt1.txt'), '_lpt1.txt');
+    });
+  });
+
+  group('DownloadService.resolveExtractedPath', () {
+    test('resolves a file inside the extraction folder', () {
+      expect(
+        DownloadService.resolveExtractedPath(
+          '/home/user/Downloads/GHelper',
+          'GHelper.exe',
+        ),
+        '/home/user/Downloads/GHelper/GHelper.exe',
+      );
+    });
+
+    test('handles Windows separators and trailing slashes', () {
+      expect(
+        DownloadService.resolveExtractedPath(
+          r'C:\Users\me\Downloads\Tool\',
+          r'bin\Tool.exe',
+        ),
+        'C:/Users/me/Downloads/Tool/bin/Tool.exe',
+      );
+    });
+
+    test('refuses to escape the extraction folder', () {
+      expect(
+        () => DownloadService.resolveExtractedPath('/tmp/tool', '../evil.exe'),
+        throwsArgumentError,
+      );
+    });
+  });
+
+  group('DownloadService.supportsAutomaticExtraction', () {
+    test('accepts zip and tar archives', () {
+      for (final name in [
+        'tool.zip',
+        'tool.ZIP',
+        'tool.tar',
+        'tool.tar.gz',
+        'tool.tgz',
+      ]) {
+        expect(
+          DownloadService.supportsAutomaticExtraction(name),
+          isTrue,
+          reason: name,
+        );
+      }
+    });
+
+    test('rejects archives that need an external tool', () {
+      for (final name in ['image.7z', 'setup.exe', 'notes.txt']) {
+        expect(
+          DownloadService.supportsAutomaticExtraction(name),
+          isFalse,
+          reason: name,
+        );
+      }
+    });
+  });
 }

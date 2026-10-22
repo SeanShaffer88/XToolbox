@@ -1,32 +1,17 @@
 import 'dart:io';
+
+import 'package:archive/archive_io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'package:archive/archive_io.dart';
+
 import '../utils/archive_extraction.dart';
 import 'settings_service.dart';
 import 'toast_notification_service.dart';
 
-class DownloadTask {
-  final String id;
-  final String url;
-  final String? filename;
-  final bool needsExtraction;
-  final String? extractPath;
-
-  DownloadTask({
-    required this.id,
-    required this.url,
-    this.filename,
-    this.needsExtraction = false,
-    this.extractPath,
-  });
-}
-
 class DownloadService {
   final ToastNotificationService _toastService;
   final SettingsService? _settingsService;
-  final Map<String, bool> _activeDownloads = {};
 
   DownloadService(this._toastService, [this._settingsService]);
 
@@ -67,25 +52,77 @@ class DownloadService {
     return waitMs > 0 ? Duration(milliseconds: waitMs) : Duration.zero;
   }
 
+  /// Joins [relativePath] onto [extractedDirectory].
+  ///
+  /// Catalog entries point at a file inside an archive. The archive itself
+  /// must always be extracted into the download folder; [relativePath] only
+  /// selects a file inside it. Throws [ArgumentError] if the path tries to
+  /// leave the extraction directory.
+  @visibleForTesting
+  static String resolveExtractedPath(
+    String extractedDirectory,
+    String relativePath,
+  ) {
+    final base = extractedDirectory
+        .replaceAll('\\', '/')
+        .replaceAll(RegExp(r'/+$'), '');
+    final relative = relativePath
+        .replaceAll('\\', '/')
+        .replaceAll(RegExp(r'^/+'), '');
+    if (relative.isEmpty) return base;
+    if (relative.split('/').contains('..')) {
+      throw ArgumentError.value(
+        relativePath,
+        'relativePath',
+        'must stay inside the extracted folder',
+      );
+    }
+    return '$base/$relative';
+  }
+
+  /// Turns a remote file name into a safe local file name.
+  @visibleForTesting
+  static String sanitizeFilename(String name) {
+    final withoutQuery = name.split('?').first.split('#').first;
+    final baseName = withoutQuery.replaceAll('\\', '/').split('/').last.trim();
+    final cleaned = baseName.replaceAll(RegExp(r'[<>:"/\\|?*\x00-\x1F]'), '_');
+    if (cleaned.isEmpty || cleaned == '.' || cleaned == '..') {
+      return 'download';
+    }
+    final reserved = RegExp(
+      r'^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?$',
+      caseSensitive: false,
+    );
+    return reserved.hasMatch(cleaned) ? '_$cleaned' : cleaned;
+  }
+
+  /// Whether the archive at [path] can be extracted by this app.
+  @visibleForTesting
+  static bool supportsAutomaticExtraction(String path) {
+    final lower = path.toLowerCase();
+    return lower.endsWith('.zip') ||
+        lower.endsWith('.tar.gz') ||
+        lower.endsWith('.tgz') ||
+        lower.endsWith('.tar');
+  }
+
   Future<String?> downloadFile({
     required String url,
     required String displayName,
     String? filename,
     bool needsExtraction = false,
-    String? extractPath,
     bool autoComplete = true,
   }) async {
-    final taskId = DateTime.now().millisecondsSinceEpoch.toString();
+    String? toastId;
+    File? outputFile;
+    var downloadCompleted = false;
 
     try {
-      // Add toast notification
-      final toastId = _toastService.addNotification(
+      toastId = _toastService.addNotification(
         title: 'Downloading $displayName',
         message: 'Preparing download...',
         status: ToastStatus.pending,
       );
-
-      _activeDownloads[taskId] = true;
 
       // HTTPS-only mode (Settings): refuse non-HTTPS sources outright.
       if (!isUrlAllowed(url, httpsOnly: _settingsService?.httpsOnly ?? false)) {
@@ -111,10 +148,9 @@ class DownloadService {
       }
 
       // Determine filename
-      final fileName = filename ?? url.split('/').last;
+      final fileName = sanitizeFilename(filename ?? url.split('/').last);
       final filePath = '${downloadsDir.path}/$fileName';
 
-      // Update toast to in-progress
       _toastService.updateNotification(
         id: toastId,
         status: ToastStatus.inProgress,
@@ -122,25 +158,25 @@ class DownloadService {
         progress: 0.0,
       );
 
-      // Download file with progress
-      final file = File(filePath);
+      outputFile = File(filePath);
       final request = http.Request('GET', Uri.parse(url));
 
-      // Add browser-like headers
+      // No manual Accept-Encoding: the HTTP client already negotiates and
+      // decodes compression. Asking for Brotli here would save compressed
+      // bytes to disk, corrupting installers and archives.
       request.headers.addAll({
         'User-Agent':
-            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, '
+            'like Gecko) Chrome/131.0.0.0 Safari/537.36',
         'Accept': '*/*',
         'Accept-Language': 'en-US,en;q=0.9',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Connection': 'keep-alive',
         'Upgrade-Insecure-Requests': '1',
       });
 
       final response = await request.send();
 
       if (response.statusCode != 200) {
-        throw Exception('Failed to download: ${response.statusCode}');
+        throw Exception('Failed to download: HTTP ${response.statusCode}');
       }
 
       final contentLength = response.contentLength ?? 0;
@@ -153,7 +189,7 @@ class DownloadService {
           : null;
       final stopwatch = Stopwatch()..start();
 
-      final sink = file.openWrite();
+      final sink = outputFile.openWrite();
 
       try {
         await for (final chunk in response.stream) {
@@ -170,21 +206,29 @@ class DownloadService {
           }
 
           if (contentLength > 0) {
-            final progress = bytesDownloaded / contentLength;
             _toastService.updateNotification(
               id: toastId,
-              progress: progress,
+              progress: bytesDownloaded / contentLength,
               message:
-                  'Downloaded ${_formatBytes(bytesDownloaded)} / ${_formatBytes(contentLength)}',
+                  'Downloaded ${_formatBytes(bytesDownloaded)} / '
+                  '${_formatBytes(contentLength)}',
             );
           }
         }
       } finally {
         await sink.close();
       }
+      downloadCompleted = true;
 
-      // Extract if needed
       if (needsExtraction) {
+        if (!supportsAutomaticExtraction(filePath)) {
+          throw Exception(
+            '$fileName cannot be extracted automatically. '
+            'ZIP and TAR archives are supported; extract this file '
+            'manually with 7-Zip.',
+          );
+        }
+
         _toastService.updateNotification(
           id: toastId,
           message: 'Extracting...',
@@ -192,8 +236,8 @@ class DownloadService {
         );
 
         final extractDir =
-            extractPath ??
-            '${downloadsDir.path}/${fileName.replaceAll(RegExp(r'\.(zip|tar\.gz|tar)$'), '')}';
+            '${downloadsDir.path}/'
+            '${fileName.replaceAll(RegExp(r'\.(zip|tar\.gz|tgz|tar)$'), '')}';
         await _extractArchive(filePath, extractDir);
 
         if (autoComplete) {
@@ -203,7 +247,6 @@ class DownloadService {
             message: 'Extracted to $extractDir',
           );
         } else {
-          // Remove the download toast, the caller will handle completion
           _toastService.removeNotification(toastId);
         }
 
@@ -216,23 +259,29 @@ class DownloadService {
             message: 'Saved to $filePath',
           );
         } else {
-          // Remove the download toast, the caller will handle completion
           _toastService.removeNotification(toastId);
         }
 
         return filePath;
       }
     } catch (e) {
-      final toastId = _toastService.notifications
-          .where((n) => n.title.contains(displayName))
-          .firstOrNull
-          ?.id;
+      // A failed download must not leave a truncated installer behind.
+      if (outputFile != null && !downloadCompleted) {
+        try {
+          if (await outputFile.exists()) {
+            await outputFile.delete();
+          }
+        } on FileSystemException catch (error) {
+          debugPrint('Could not remove partial download: $error');
+        }
+      }
 
+      final details = e.toString().replaceFirst('Exception: ', '');
       if (toastId != null) {
         _toastService.updateNotification(
           id: toastId,
           status: ToastStatus.error,
-          message: 'Failed: ${e.toString()}',
+          message: 'Failed: $details',
         );
       }
 
@@ -241,8 +290,6 @@ class DownloadService {
       }
 
       return null;
-    } finally {
-      _activeDownloads.remove(taskId);
     }
   }
 
@@ -250,31 +297,28 @@ class DownloadService {
     final file = File(archivePath);
     final bytes = await file.readAsBytes();
 
-    // Create extract directory
     final extractDir = Directory(extractPath);
     if (!await extractDir.exists()) {
       await extractDir.create(recursive: true);
     }
 
-    // Extract based on file extension. ArchiveExtraction validates every
-    // entry path before writing, so archives cannot escape extractPath.
-    if (archivePath.endsWith('.zip')) {
+    final lower = archivePath.toLowerCase();
+    if (lower.endsWith('.zip')) {
       await ArchiveExtraction.extract(
         ZipDecoder().decodeBytes(bytes),
         extractPath,
       );
-    } else if (archivePath.endsWith('.tar.gz') ||
-        archivePath.endsWith('.tar')) {
-      // Handle tar archives
-      Archive archive;
-      if (archivePath.endsWith('.tar.gz')) {
-        final gzipBytes = GZipDecoder().decodeBytes(bytes);
-        archive = TarDecoder().decodeBytes(gzipBytes);
-      } else {
-        archive = TarDecoder().decodeBytes(bytes);
-      }
-
+    } else if (lower.endsWith('.tar.gz') || lower.endsWith('.tgz')) {
+      final gzipBytes = GZipDecoder().decodeBytes(bytes);
+      final archive = TarDecoder().decodeBytes(gzipBytes);
       await ArchiveExtraction.extract(archive, extractPath);
+    } else if (lower.endsWith('.tar')) {
+      final archive = TarDecoder().decodeBytes(bytes);
+      await ArchiveExtraction.extract(archive, extractPath);
+    } else {
+      throw Exception(
+        'Unsupported archive type. ZIP and TAR archives are supported.',
+      );
     }
   }
 
@@ -285,13 +329,5 @@ class DownloadService {
       return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
     }
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
-  }
-
-  bool isDownloading(String taskId) {
-    return _activeDownloads.containsKey(taskId);
-  }
-
-  void cancelAllDownloads() {
-    _activeDownloads.clear();
   }
 }
