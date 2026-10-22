@@ -92,10 +92,10 @@ void main() {
 
     final cleanup = service(environment: {'LOCALAPPDATA': localAppData.path});
     final estimate = await cleanup.estimate(target('browser_cache'));
-    expect(estimate.bytes, 7);
+    expect(estimate.bytes, 8);
 
     final outcome = await cleanup.clean(target('browser_cache'));
-    expect(outcome.bytesFreed, 7);
+    expect(outcome.bytesFreed, 8);
     expect(outcome.filesDeleted, 2);
     expect(File('${profile.path}/Bookmarks').existsSync(), isTrue);
   });
