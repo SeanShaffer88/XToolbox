@@ -1,3 +1,5 @@
+> **Fork identity: independent continuation.** Derived from [nyxiereal/XToolbox](https://github.com/nyxiereal/XToolbox). Default-branch changes cover catalog repair/expansion, archive extraction checks, download settings and CI. See [fork releases](https://github.com/SeanShaffer88/XToolbox/releases) for available packages. These historical source changes are not a fresh Windows runtime validation. See [fork provenance](PROVENANCE.md) for ownership and reporting routes.
+
 # XToolBox
 A toolbox full of Windows 10/11 utilities: run AME Wizard playbooks (AtlasOS, ReviOS, AME), install curated software, clean up your system, and check system info — all from one app.  
 Originally made by [Nyx](https://nyx.meowery.eu).
@@ -85,3 +87,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, checks, and how to
 
 ## ✍️ Keywords, pls ignore
 input lag latency optimization performance gaming overclock oc windows ping debloat milliseconds fps boost increase decrease guide mouse tweak tweaks bios uefi pc overclocking 7 8.1 10 11 w7 w8 . w10 w11 linux game gamer optimizations frametime frametimes 0. 1080p 720p reaction time delay delayed bloat bloated debloated steam battle origin epic games quake counter strike royale br intel nvidia pascal turing ampere reflex amd ati ryzen r9 r7 r5 r3 radeon rdna core i9 i7 i5 i3 memory ram gpu ssd nvme psu power supply laptop how to screenshot on window download release date andersen blinds for pella media creation tool fast chris titus tech optimize debloater github reddit iso beebom jayztwocents script best does not work defender dell dism deutsch what mean 
+
