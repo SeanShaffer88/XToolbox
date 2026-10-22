@@ -58,7 +58,6 @@ class DownloadService {
   /// must always be extracted into the download folder; [relativePath] only
   /// selects a file inside it. Throws [ArgumentError] if the path tries to
   /// leave the extraction directory.
-  @visibleForTesting
   static String resolveExtractedPath(
     String extractedDirectory,
     String relativePath,
