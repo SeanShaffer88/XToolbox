@@ -1,6 +1,8 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../models/asset.dart';
 
 class AssetProvider extends ChangeNotifier {

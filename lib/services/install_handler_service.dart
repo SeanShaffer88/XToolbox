@@ -1,7 +1,9 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:process_run/shell.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import 'toast_notification_service.dart';
 import 'download_service.dart';
 import '../models/asset.dart';
@@ -551,8 +553,7 @@ class InstallHandlerService {
           _toastService.updateNotification(
             id: toastId,
             status: ToastStatus.error,
-            message:
-                'Permission denied when checking App Installer. Please run the app as Administrator or install "App Installer" from the Microsoft Store. Opening Store...',
+            message: 'Permission denied when checking App Installer. Please run the app as Administrator or install "App Installer" from the Microsoft Store. Opening Store...',
           );
 
           await _runCommand(
@@ -580,8 +581,7 @@ class InstallHandlerService {
       _toastService.updateNotification(
         id: toastId,
         status: ToastStatus.error,
-        message:
-            'Failed to register App Installer automatically. Opening Microsoft Store to help you install App Installer (search: "App Installer").',
+        message: 'Failed to register App Installer automatically. Opening Microsoft Store to help you install App Installer (search: "App Installer").',
       );
 
       // Open store search for 'App Installer' to let the user install it interactively

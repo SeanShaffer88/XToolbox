@@ -36,8 +36,7 @@ void main() {
   }
 
   test('temporary files are measured and removed', () async {
-    final temp = Directory('${sandbox.path}/temp')
-      ..createSync(recursive: true);
+    final temp = Directory('${sandbox.path}/temp')..createSync(recursive: true);
     File('${temp.path}/a.tmp').writeAsStringSync('12345');
     Directory('${temp.path}/nested').createSync();
     File('${temp.path}/nested/b.tmp').writeAsStringSync('123');
@@ -57,8 +56,7 @@ void main() {
     final downloads = Directory('${sandbox.path}/Downloads')
       ..createSync(recursive: true);
     final now = DateTime(2026, 10, 22, 12);
-    final oldFile = File('${downloads.path}/old.exe')
-      ..writeAsStringSync('old');
+    final oldFile = File('${downloads.path}/old.exe')..writeAsStringSync('old');
     oldFile.setLastModifiedSync(now.subtract(const Duration(days: 40)));
     final recentFile = File('${downloads.path}/recent.exe')
       ..writeAsStringSync('recent');
@@ -92,9 +90,7 @@ void main() {
     )..createSync(recursive: true);
     File('${firefoxCache.path}/entry').writeAsStringSync('ff');
 
-    final cleanup = service(
-      environment: {'LOCALAPPDATA': localAppData.path},
-    );
+    final cleanup = service(environment: {'LOCALAPPDATA': localAppData.path});
     final estimate = await cleanup.estimate(target('browser_cache'));
     expect(estimate.bytes, 7);
 
@@ -114,9 +110,7 @@ void main() {
     final iconCache = File('${explorer.path}/iconcache_96.db')
       ..writeAsStringSync('icon');
 
-    final cleanup = service(
-      environment: {'LOCALAPPDATA': localAppData.path},
-    );
+    final cleanup = service(environment: {'LOCALAPPDATA': localAppData.path});
     final estimate = await cleanup.estimate(target('thumbnail_cache'));
     expect(estimate.bytes, 5);
 
@@ -131,8 +125,7 @@ void main() {
     final windows = Directory('${sandbox.path}/Windows');
     final prefetch = Directory('${windows.path}/Prefetch')
       ..createSync(recursive: true);
-    final pfFile = File('${prefetch.path}/APP.pf')
-      ..writeAsStringSync('pf');
+    final pfFile = File('${prefetch.path}/APP.pf')..writeAsStringSync('pf');
     final otherFile = File('${prefetch.path}/ReadyBoot')
       ..writeAsStringSync('keep');
 
@@ -183,7 +176,10 @@ void main() {
     );
     expect(CleanupService.joinPath('C:/root/', '/child'), 'C:/root/child');
     expect(CleanupService.joinPath('C:/root', '../escape'), 'C:/root');
-    expect(CleanupService.joinPath(r'C:\root', r'child\file'), 'C:/root/child/file');
+    expect(
+      CleanupService.joinPath(r'C:\root', r'child\file'),
+      'C:/root/child/file',
+    );
   });
 
   test('formatBytes uses readable binary units', () {

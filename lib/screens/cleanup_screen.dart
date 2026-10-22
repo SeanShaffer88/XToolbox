@@ -176,7 +176,9 @@ class _CleanupScreenState extends State<CleanupScreen> {
     final failures = outcomes.where((outcome) => !outcome.success).length;
     toastService.updateNotification(
       id: toastId,
-      title: failures == 0 ? 'Cleanup complete' : 'Cleanup finished with issues',
+      title: failures == 0
+          ? 'Cleanup complete'
+          : 'Cleanup finished with issues',
       message: failures == 0
           ? 'Freed ${CleanupService.formatBytes(freed)}'
           : '$failures of ${outcomes.length} options reported a problem',
@@ -326,10 +328,7 @@ class _CleanupScreenState extends State<CleanupScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.info_outline,
-                  color: colorScheme.primary,
-                ),
+                Icon(Icons.info_outline, color: colorScheme.primary),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(

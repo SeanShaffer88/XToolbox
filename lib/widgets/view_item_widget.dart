@@ -1,7 +1,9 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../models/asset.dart';
 import '../services/install_handler_service.dart';
 import '../utils/iconmap_util.dart';

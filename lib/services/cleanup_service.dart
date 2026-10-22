@@ -292,10 +292,9 @@ class CleanupService {
           if (directory == null) {
             return _failure(target, 'Thumbnail cache folder not found.');
           }
-          final sizes = await _deleteFilesInDirectories(
-            [directory],
-            pattern: _thumbnailPattern,
-          );
+          final sizes = await _deleteFilesInDirectories([
+            directory,
+          ], pattern: _thumbnailPattern);
           return _resultFor(
             target,
             sizes,
@@ -308,10 +307,9 @@ class CleanupService {
           if (directory == null) {
             return _failure(target, 'Prefetch folder not found.');
           }
-          final sizes = await _deleteFilesInDirectories(
-            [directory],
-            pattern: _prefetchPattern,
-          );
+          final sizes = await _deleteFilesInDirectories([
+            directory,
+          ], pattern: _prefetchPattern);
           return _resultFor(target, sizes);
         default:
           return _failure(target, 'Unknown cleanup option.');
@@ -323,8 +321,11 @@ class CleanupService {
         '${error.path == null ? '' : ' (${error.path})'}',
       );
     } on ProcessException {
-      return _failure(target, 'Cleanup failed: a required system tool '
-          'could not be started.');
+      return _failure(
+        target,
+        'Cleanup failed: a required system tool '
+        'could not be started.',
+      );
     }
   }
 
@@ -435,9 +436,7 @@ class CleanupService {
   Directory? get _thumbnailDirectory {
     final localAppData = _localAppData;
     if (localAppData == null) return null;
-    return Directory(
-      joinPath(localAppData, 'Microsoft/Windows/Explorer'),
-    );
+    return Directory(joinPath(localAppData, 'Microsoft/Windows/Explorer'));
   }
 
   Directory? get _prefetchDirectory {
@@ -512,10 +511,7 @@ class CleanupService {
     r'^thumbcache_.*\.db$',
     caseSensitive: false,
   );
-  static final RegExp _prefetchPattern = RegExp(
-    r'\.pf$',
-    caseSensitive: false,
-  );
+  static final RegExp _prefetchPattern = RegExp(r'\.pf$', caseSensitive: false);
 
   Future<int?> _recycleBinBytes() async {
     if (!_isWindows) return null;
@@ -598,10 +594,7 @@ class CleanupService {
     return sizes;
   }
 
-  Future<_Sizes> _measureFiles(
-    Directory? directory, {
-    RegExp? pattern,
-  }) async {
+  Future<_Sizes> _measureFiles(Directory? directory, {RegExp? pattern}) async {
     final sizes = _Sizes();
     if (directory == null || !await directory.exists()) return sizes;
     for (final entity in await directory.list(followLinks: false).toList()) {
@@ -707,9 +700,7 @@ class CleanupService {
   /// Joins [relative] onto [root] with a single separator and without
   /// allowing a parent-directory segment to escape [root].
   static String joinPath(String root, String relative) {
-    final cleanRoot = root
-        .replaceAll('\\', '/')
-        .replaceAll(RegExp(r'/+$'), '');
+    final cleanRoot = root.replaceAll('\\', '/').replaceAll(RegExp(r'/+$'), '');
     final cleanRelative = relative
         .replaceAll('\\', '/')
         .replaceAll(RegExp(r'^/+'), '');

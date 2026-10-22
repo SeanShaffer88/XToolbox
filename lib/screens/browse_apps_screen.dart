@@ -157,9 +157,10 @@ class _BrowseAppsScreenState extends State<BrowseAppsScreen> {
                               'via ${method.type.displayName}',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Theme.of(
-                                  context,
-                                ).textTheme.bodySmall?.color,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.color,
                               ),
                             ),
                           ],
@@ -378,9 +379,9 @@ class _BrowseAppsScreenState extends State<BrowseAppsScreen> {
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? Theme.of(context).colorScheme.primary
-                                : Theme.of(
-                                    context,
-                                  ).colorScheme.surfaceContainerHighest,
+                                : Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -389,9 +390,9 @@ class _BrowseAppsScreenState extends State<BrowseAppsScreen> {
                               fontSize: 12,
                               color: isSelected
                                   ? Theme.of(context).colorScheme.onPrimary
-                                  : Theme.of(
-                                      context,
-                                    ).colorScheme.onSurfaceVariant,
+                                  : Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
                             ),
                           ),
                         ),

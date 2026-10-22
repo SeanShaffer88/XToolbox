@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../services/settings_service.dart';
 import '../utils/theme_provider.dart';
 
@@ -554,9 +555,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           CircleAvatar(
             radius: 24,
-            backgroundColor: Theme.of(
-              context,
-            ).colorScheme.surfaceContainerHighest,
+            backgroundColor: Theme.of(context)
+                .colorScheme
+                .surfaceContainerHighest,
             backgroundImage: NetworkImage(avatarUrl),
             child: const SizedBox.shrink(),
           ),

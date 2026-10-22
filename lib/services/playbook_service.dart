@@ -1,9 +1,11 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:archive/archive.dart';
 import 'package:xml/xml.dart';
+
 import '../models/playbook.dart';
 import '../utils/archive_extraction.dart';
 import 'toast_notification_service.dart';
@@ -148,9 +150,8 @@ class PlaybookService extends ChangeNotifier {
 
       // Step 1: Download and extract CLI if not present
       if (!await cliDir.exists() ||
-          !await File(
-            '$workDir/CLI-Standalone/TrustedUninstaller.CLI.exe',
-          ).exists()) {
+          !await File('$workDir/CLI-Standalone/TrustedUninstaller.CLI.exe')
+              .exists()) {
         await _downloadAndExtractCLI(workDir);
       } else {
         _updateStatus(
@@ -614,9 +615,8 @@ class PlaybookService extends ChangeNotifier {
 
       // Step 1: Download and extract CLI if not present
       if (!await cliDir.exists() ||
-          !await File(
-            '$workDir/CLI-Standalone/TrustedUninstaller.CLI.exe',
-          ).exists()) {
+          !await File('$workDir/CLI-Standalone/TrustedUninstaller.CLI.exe')
+              .exists()) {
         await _downloadAndExtractCLI(workDir);
       } else {
         _updateStatus(
