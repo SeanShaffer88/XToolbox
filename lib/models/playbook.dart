@@ -59,22 +59,28 @@ class Playbook {
     Playbook(
       name: 'ReviOS 25.10',
       description: 'Revision Playbook - Optimized Windows experience',
-      downloadUrl: 'https://github.com/meetrevision/playbook/releases/download/25.10/Revi-PB-25.10.apbx',
+      downloadUrl:
+          'https://github.com/meetrevision/playbook/releases/download/25.10/Revi-PB-25.10.apbx',
     ),
     Playbook(
       name: 'AtlasOS v0.5.0',
       description: 'Atlas Playbook - Performance-focused Windows configuration',
-      downloadUrl: 'https://github.com/Atlas-OS/Atlas/releases/download/0.5.0-hotfix/AtlasPlaybook_v0.5.0-hotfix.apbx',
+      downloadUrl:
+          'https://github.com/Atlas-OS/Atlas/releases/download/0.5.0-hotfix/AtlasPlaybook_v0.5.0-hotfix.apbx',
     ),
     Playbook(
       name: 'RapidOS',
-      description: 'RapidOS Playbook - Lightweight, gaming-focused Windows configuration',
-      downloadUrl: 'https://github.com/rapid-community/RapidOS/releases/latest/download/RapidOS.apbx',
+      description:
+          'RapidOS Playbook - Lightweight, gaming-focused Windows configuration',
+      downloadUrl:
+          'https://github.com/rapid-community/RapidOS/releases/latest/download/RapidOS.apbx',
     ),
     Playbook(
       name: 'AtmosphereOS',
-      description: 'Atmosphere Playbook - Modular Windows configuration built on AtlasOS foundations',
-      downloadUrl: 'https://github.com/AtmosphereTeam/AtmosphereOS/releases/latest/download/AtmosphereOS.apbx',
+      description:
+          'Atmosphere Playbook - Modular Windows configuration built on AtlasOS foundations',
+      downloadUrl:
+          'https://github.com/AtmosphereTeam/AtmosphereOS/releases/latest/download/AtmosphereOS.apbx',
     ),
   ];
 }

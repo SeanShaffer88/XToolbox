@@ -150,8 +150,9 @@ class PlaybookService extends ChangeNotifier {
 
       // Step 1: Download and extract CLI if not present
       if (!await cliDir.exists() ||
-          !await File('$workDir/CLI-Standalone/TrustedUninstaller.CLI.exe')
-              .exists()) {
+          !await File(
+            '$workDir/CLI-Standalone/TrustedUninstaller.CLI.exe',
+          ).exists()) {
         await _downloadAndExtractCLI(workDir);
       } else {
         _updateStatus(
@@ -615,8 +616,9 @@ class PlaybookService extends ChangeNotifier {
 
       // Step 1: Download and extract CLI if not present
       if (!await cliDir.exists() ||
-          !await File('$workDir/CLI-Standalone/TrustedUninstaller.CLI.exe')
-              .exists()) {
+          !await File(
+            '$workDir/CLI-Standalone/TrustedUninstaller.CLI.exe',
+          ).exists()) {
         await _downloadAndExtractCLI(workDir);
       } else {
         _updateStatus(
