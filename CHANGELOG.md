@@ -5,6 +5,18 @@ All notable changes to XToolBox are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.1] - 2026-10-22
+
+### Fixed
+
+- HTTPS-only mode now covers playbook downloads too. The setting
+  previously applied only to catalog installs; the TrustedUninstaller
+  CLI, playbook files, and the 7-Zip helper were fetched without the
+  check. Every download the app makes now honors the setting. (The
+  download-path and bandwidth-limit settings still apply to catalog
+  downloads only: playbook files are internal staging data rather
+  than user downloads, and those transfers are not streamed.)
+
 ## [5.3.0] - 2026-10-22
 
 Revival completion: the cleanup screen is finished, portable installs work,

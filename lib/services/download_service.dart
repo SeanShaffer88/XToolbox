@@ -28,7 +28,8 @@ class DownloadService {
   }
 
   /// Whether [url] may be downloaded under the HTTPS-only setting.
-  @visibleForTesting
+  /// Shared by DownloadService and PlaybookService so every download
+  /// the app makes follows the same rule.
   static bool isUrlAllowed(String url, {required bool httpsOnly}) {
     if (!httpsOnly) return true;
     return Uri.tryParse(url)?.scheme.toLowerCase() == 'https';

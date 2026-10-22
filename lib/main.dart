@@ -45,12 +45,17 @@ Future<void> main() async {
           update: (_, toastService, downloadService, _) =>
               InstallHandlerService(toastService, downloadService),
         ),
-        ChangeNotifierProxyProvider<ToastNotificationService, PlaybookService>(
+        ChangeNotifierProxyProvider2<
+          ToastNotificationService,
+          SettingsService,
+          PlaybookService
+        >(
           create: (context) => PlaybookService(
             Provider.of<ToastNotificationService>(context, listen: false),
+            Provider.of<SettingsService>(context, listen: false),
           ),
-          update: (_, toastService, previous) =>
-              previous ?? PlaybookService(toastService),
+          update: (_, toastService, settingsService, previous) =>
+              previous ?? PlaybookService(toastService, settingsService),
         ),
         ChangeNotifierProvider(create: (_) => UpdateService()),
         ChangeNotifierProvider(create: (_) => NetworkCheckerService()),
