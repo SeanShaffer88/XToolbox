@@ -1,0 +1,32 @@
+name: Format helper
+
+on:
+  push:
+    branches: [arena/2b8c5dee-xtoolbox]
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Format and commit
+        run: |
+          dart format lib/ test/
+          if git diff --quiet; then
+            echo "Sources are already formatted."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lib test
+          git commit -m "chore: apply dart format"
+          git push
