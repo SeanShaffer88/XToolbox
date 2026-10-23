@@ -242,7 +242,7 @@
         "category": "browsers",
         "icon": "browser",
         "author": "Mozilla",
-        "homepage": "https://www.mozilla.org/firefox",
+        "homepage": "https://www.firefox.com/",
         "install_methods": [
             {
                 "type": "direct_download",
@@ -587,7 +587,7 @@
         "category": "linux",
         "icon": "linux",
         "author": "System76",
-        "homepage": "https://pop.system76.com/",
+        "homepage": "https://system76.com/pop",
         "install_methods": [
             {
                 "type": "direct_download",
@@ -1134,7 +1134,7 @@
         "category": "gaming",
         "icon": "box",
         "author": "LabyMedia GmbH",
-        "homepage": "https://www.labymod.net/",
+        "homepage": "https://laby.net/client",
         "install_methods": [
             {
                 "type": "direct_download",
