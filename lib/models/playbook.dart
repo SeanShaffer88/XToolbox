@@ -49,12 +49,12 @@ class Playbook {
     Playbook(
       name: 'AME 10 Beta',
       description: 'Ameliorated Windows 10 - Enhanced privacy and control',
-      downloadUrl: 'https://download.ameliorated.io/AME%2010%20Beta.apbx',
+      downloadUrl: 'https://download.amelabs.net/AME%2010%20Beta.apbx',
     ),
     Playbook(
       name: 'Privacy+',
       description: 'Ameliorated Privacy+ - Maximum privacy configuration',
-      downloadUrl: 'https://download.ameliorated.io/Privacy%2B.apbx',
+      downloadUrl: 'https://download.amelabs.net/Privacy%2B.apbx',
     ),
     Playbook(
       name: 'ReviOS 25.10',
