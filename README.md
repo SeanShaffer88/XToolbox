@@ -29,9 +29,9 @@ Originally made by [Nyx](https://nyx.meowery.eu).
 ## 📸 Screenshots
 <details>
     <summary>Click to reveal!</summary>
-    <img width="1266" height="713" alt="XToolbox v5.3.1 screenshot" src="https://github.com/user-attachments/assets/6cc574db-2d3a-4145-be57-fb6a09c0adb3" />
-    <img width="1266" height="713" alt="XToolbox v5.3.1 screenshot" src="https://github.com/user-attachments/assets/3913ce8b-0dc6-481c-9dc3-e4514fb9668e" />
-    <img width="1266" height="713" alt="XToolbox v5.3.1 screenshot" src="https://github.com/user-attachments/assets/807706c2-03d4-424f-a5c2-e932bfc4ec87" />
+    <img width="1266" height="713" alt="XToolbox v5.3.1 screenshot" src="https://github.com/user-attachments/assets/e5fb6c9f-5ff7-4a18-b463-b98772d6adf3" />
+    <img width="1266" height="713" alt="XToolbox v5.3.1 screenshot" src="https://github.com/user-attachments/assets/4170cda3-348c-4be0-ae92-02bb36543b5e" />
+    <img width="1266" height="713" alt="XToolbox v5.3.1 screenshot" src="https://github.com/user-attachments/assets/76066cf5-11d3-4b08-a67e-8294591b6e7e" />
 </details>
 
 ## 🖊️ Reviews
