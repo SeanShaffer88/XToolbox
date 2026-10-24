@@ -64,6 +64,15 @@ void main() {
                     'archive',
               );
             }
+            if (method.sha256 != null) {
+              expect(
+                method.sha256,
+                matches(RegExp(r'^[0-9a-f]{64}$')),
+                reason:
+                    '${asset.id}: sha256 must be 64 lowercase hex '
+                    'characters',
+              );
+            }
           case InstallType.winget:
           case InstallType.chocolatey:
           case InstallType.scoop:
