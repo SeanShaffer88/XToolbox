@@ -5,6 +5,20 @@ All notable changes to XToolBox are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.3] - 2026-10-23
+
+### Added
+
+- **Checksum verification for pinned downloads.** Install methods can
+  now carry a `sha256`; when one is present, the downloaded file is
+  hashed and compared before it is extracted or launched. A mismatch
+  deletes the file and fails the install with the expected and actual
+  hashes shown. All 15 version-pinned GitHub-release downloads in the
+  catalog are pinned (hashes taken from the publishers' release
+  records or computed from the release files themselves). Downloads
+  without a pinned hash — including every `latest` URL, whose content
+  changes between releases — behave as before.
+
 ## [5.3.2] - 2026-10-23
 
 ### Fixed
