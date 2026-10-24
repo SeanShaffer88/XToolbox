@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// Queries what winget has installed on this machine.
@@ -38,6 +39,29 @@ class WingetService {
       return result;
     } catch (_) {
       return {};
+    }
+  }
+
+  /// The winget arguments that uninstall [packageId] silently.
+  @visibleForTesting
+  static List<String> uninstallArguments(String packageId) => [
+    'uninstall',
+    '--id',
+    packageId,
+    '--silent',
+    '--accept-source-agreements',
+    '--disable-interactivity',
+  ];
+
+  /// Uninstalls [packageId] via winget. False off Windows, when
+  /// winget is missing, or when winget reports failure.
+  Future<bool> uninstall(String packageId) async {
+    if (!Platform.isWindows) return false;
+    try {
+      final result = await Process.run('winget', uninstallArguments(packageId));
+      return result.exitCode == 0;
+    } catch (_) {
+      return false;
     }
   }
 
