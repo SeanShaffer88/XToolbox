@@ -596,10 +596,9 @@
                 "url": "%POP%,nvidia"
             },
             {
-                "type": "direct_download",
-                "label": "RPI4",
-                "filename": "PopOS-RPI.img.xz",
-                "url": "%POP%,raspi"
+                "type": "web_link",
+                "label": "Raspberry Pi (website)",
+                "url": "https://pop.system76.com/"
             },
             {
                 "type": "direct_download",
@@ -622,7 +621,7 @@
                 "type": "direct_download",
                 "label": "Ubuntu",
                 "filename": "Ubuntu.iso",
-                "url": "https://cdimage.ubuntu.com/ubuntu/releases/%UBUNTUVERSION%/release/ubuntu-%UBUNTUVERSION%-desktop-legacy-amd64.iso"
+                "url": "https://cdimage.ubuntu.com/ubuntu/releases/%UBUNTUVERSION%/release/ubuntu-%UBUNTUVERSION%-desktop-amd64.iso"
             },
             {
                 "type": "direct_download",
@@ -634,7 +633,7 @@
                 "type": "direct_download",
                 "label": "Lubuntu",
                 "filename": "Lubuntu.iso",
-                "url": "https://cdimage.ubuntu.com/xubuntu/releases/%UBUNTUVERSION%/release/xubuntu-%UBUNTUVERSION%-desktop-amd64.iso"
+                "url": "https://cdimage.ubuntu.com/lubuntu/releases/%UBUNTUVERSION%/release/lubuntu-%UBUNTUVERSION%-desktop-amd64.iso"
             }
         ]
     },
@@ -766,7 +765,7 @@
                 "type": "direct_download",
                 "label": "Handheld",
                 "filename": "CachyOS-Handheld.iso",
-                "url": "https://cdn77.cachyos.org/ISO/desktop/%CACHYVERSION%/cachyos-desktop-linux-%CACHYVERSION%.iso"
+                "url": "https://cdn77.cachyos.org/ISO/handheld/%CACHYVERSION%/cachyos-handheld-linux-%CACHYVERSION%.iso"
             }
         ]
     },

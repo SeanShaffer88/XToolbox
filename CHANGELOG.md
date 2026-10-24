@@ -5,6 +5,24 @@ All notable changes to XToolBox are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.2] - 2026-10-23
+
+### Fixed
+
+- **Distro ISO downloads work again.** 18 catalog entries (Linux Mint,
+  Ubuntu and flavors, Pop!_OS, Artix, Solus, Debian, EndeavourOS,
+  CachyOS) shipped with `%TOKEN%` placeholder URLs that nothing ever
+  resolved, so those downloads always failed. A new resolver turns
+  each template into the current image URL using the distro's own
+  mirror listing or build API, verifies the file exists (stepping
+  down to the previous release if the newest is missing), and only
+  then downloads. Data fixes riding along: the Ubuntu image is the
+  standard desktop ISO (the legacy variant is discontinued), the
+  Lubuntu entry points at Lubuntu images (it linked Xubuntu), the
+  CachyOS Handheld entry points at the handheld image (it linked the
+  desktop one), and Pop!_OS for Raspberry Pi is now a web link (it is
+  no longer published as a direct image).
+
 ## [5.3.1] - 2026-10-22
 
 ### Fixed
