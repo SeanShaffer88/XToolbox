@@ -29,7 +29,7 @@
         "category": "customization",
         "icon": "wallpaper",
         "author": "rocksdanister",
-        "homepage": "https://github.com/rocksdanister/lively",
+        "homepage": "https://github.com/lively-community/lively",
         "install_methods": [
             {
                 "type": "direct_download",
@@ -603,7 +603,7 @@
             {
                 "type": "web_link",
                 "label": "Raspberry Pi (website)",
-                "url": "https://pop.system76.com/"
+                "url": "https://system76.com/pop"
             },
             {
                 "type": "direct_download",
@@ -897,7 +897,7 @@
             {
                 "type": "web_link",
                 "label": "Open in Browser",
-                "url": "https://rectify11.net/"
+                "url": "https://rectify11.net/home"
             }
         ]
     },
@@ -1278,7 +1278,7 @@
         "category": "gaming",
         "icon": "game",
         "author": "pizzaboxer",
-        "homepage": "https://github.com/pizzaboxer/bloxstrap",
+        "homepage": "https://github.com/bloxstraplabs/bloxstrap",
         "install_methods": [
             {
                 "type": "direct_download",
@@ -1403,7 +1403,7 @@
         "category": "runtimes",
         "icon": "code",
         "author": "The Python Software Foundation",
-        "homepage": "https://python.org/",
+        "homepage": "https://www.python.org/",
         "install_methods": [
             {
                 "type": "direct_download",
@@ -2018,7 +2018,7 @@
         "category": "apps",
         "icon": "download",
         "author": "Patch My PC",
-        "homepage": "https://patchmypc.com/home-updater",
+        "homepage": "https://patchmypc.com/product/home-updater/",
         "install_methods": [
             {
                 "type": "direct_download",
