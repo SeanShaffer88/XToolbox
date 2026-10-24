@@ -93,7 +93,7 @@ Rules:
 
   | `type` | Required fields | Notes |
   | --- | --- | --- |
-  | `direct_download` | `url`, `filename` | Downloaded and launched. For `.zip`, `.tar`, `.tar.gz` or `.tgz` downloads set `needs_extraction: true` and `executable_path` to the file or folder inside the archive. Other archive types (for example `.7z`) are not extracted by the app; use a `web_link` instead. Typical labels: `Installer`, `Portable`. |
+  | `direct_download` | `url`, `filename` | Downloaded and launched. For `.zip`, `.tar`, `.tar.gz` or `.tgz` downloads set `needs_extraction: true` and `executable_path` to the file or folder inside the archive. Other archive types (for example `.7z`) are not extracted by the app; use a `web_link` instead. Typical labels: `Installer`, `Portable`. Optional: `sha256` — the file's SHA-256 (64 lowercase hex). When present, the download is verified against it and deleted on mismatch. Only pin hashes for version-pinned URLs; never for `latest` URLs, whose content changes. |
   | `winget` | `package_id` | Label: `Install via Winget`. |
   | `microsoft_store` | `store_id` | The Store product ID (e.g. `9nghp3dx8hdx`). Label: `Install via Microsoft Store`. |
   | `powershell` | `command` | Run in PowerShell. Label: `Launch Application`. Only for commands the project itself publishes. |
