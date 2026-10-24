@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'toast_notification_service.dart';
 import 'download_service.dart';
 import 'distro_resolver.dart';
+import 'history_service.dart';
 import 'winget_service.dart';
 import '../models/asset.dart';
 
@@ -16,19 +17,65 @@ class InstallHandlerService {
   final ToastNotificationService _toastService;
   final DownloadService _downloadService;
   final DistroResolver _distroResolver;
+  final HistoryService _historyService;
 
   InstallHandlerService(
     this._toastService,
     this._downloadService, [
     DistroResolver? distroResolver,
     WingetService? wingetService,
+    HistoryService? historyService,
   ]) : _distroResolver = distroResolver ?? DistroResolver(),
-       _wingetService = wingetService ?? WingetService();
+       _wingetService = wingetService ?? WingetService(),
+       _historyService = historyService ?? HistoryService();
 
   final WingetService _wingetService;
 
+  /// Records one finished action in the install history. History
+  /// is best-effort evidence; recording must never break the action
+  /// it describes, so every failure here is swallowed.
+  Future<void> _recordHistory({
+    required String? assetId,
+    required String appName,
+    required HistoryAction action,
+    required InstallMethod method,
+    required bool success,
+  }) async {
+    try {
+      await _historyService.record(
+        HistoryEntry(
+          assetId: assetId ?? '',
+          appName: appName,
+          action: action,
+          methodType: method.type.name,
+          methodLabel: method.label,
+          success: success,
+          timestamp: DateTime.now(),
+        ),
+      );
+    } catch (_) {
+      // Deliberately ignored — see the doc comment above.
+    }
+  }
+
   /// Main install handler that processes install methods with auto-retry logic
   Future<InstallResult> handleInstall({
+    required InstallMethod method,
+    required String appName,
+    String? assetId,
+  }) async {
+    final result = await _install(method: method, appName: appName);
+    await _recordHistory(
+      assetId: assetId,
+      appName: appName,
+      action: HistoryAction.install,
+      method: method,
+      success: result == InstallResult.success,
+    );
+    return result;
+  }
+
+  Future<InstallResult> _install({
     required InstallMethod method,
     required String appName,
   }) async {
@@ -84,6 +131,22 @@ class InstallHandlerService {
   Future<InstallResult> handleUpgrade({
     required InstallMethod method,
     required String appName,
+    String? assetId,
+  }) async {
+    final result = await _upgradeImpl(method: method, appName: appName);
+    await _recordHistory(
+      assetId: assetId,
+      appName: appName,
+      action: HistoryAction.upgrade,
+      method: method,
+      success: result == InstallResult.success,
+    );
+    return result;
+  }
+
+  Future<InstallResult> _upgradeImpl({
+    required InstallMethod method,
+    required String appName,
   }) async {
     if (method.type != InstallType.winget || method.packageId == null) {
       return InstallResult.failed;
@@ -120,6 +183,22 @@ class InstallHandlerService {
   }
 
   Future<InstallResult> handleUninstall({
+    required InstallMethod method,
+    required String appName,
+    String? assetId,
+  }) async {
+    final result = await _uninstallImpl(method: method, appName: appName);
+    await _recordHistory(
+      assetId: assetId,
+      appName: appName,
+      action: HistoryAction.uninstall,
+      method: method,
+      success: result == InstallResult.success,
+    );
+    return result;
+  }
+
+  Future<InstallResult> _uninstallImpl({
     required InstallMethod method,
     required String appName,
   }) async {

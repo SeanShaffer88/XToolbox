@@ -49,6 +49,7 @@ class ViewItemWidget extends StatelessWidget {
     final result = await installHandler.handleInstall(
       method: method,
       appName: asset.name,
+      assetId: asset.id,
     );
 
     if (result == InstallResult.success) {
@@ -95,7 +96,11 @@ class ViewItemWidget extends StatelessWidget {
     final assetProvider = Provider.of<AssetProvider>(context, listen: false);
 
     Navigator.of(context).pop();
-    await installHandler.handleUninstall(method: method, appName: asset.name);
+    await installHandler.handleUninstall(
+      method: method,
+      appName: asset.name,
+      assetId: asset.id,
+    );
     await assetProvider.refreshInstalledPackages();
   }
 
@@ -110,7 +115,11 @@ class ViewItemWidget extends StatelessWidget {
     final assetProvider = Provider.of<AssetProvider>(context, listen: false);
 
     Navigator.of(context).pop();
-    await installHandler.handleUpgrade(method: method, appName: asset.name);
+    await installHandler.handleUpgrade(
+      method: method,
+      appName: asset.name,
+      assetId: asset.id,
+    );
     await assetProvider.refreshInstalledPackages();
   }
 
