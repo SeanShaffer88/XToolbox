@@ -26,6 +26,7 @@ class _BrowseAppsScreenState extends State<BrowseAppsScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AssetProvider>().loadAssets();
+      context.read<AssetProvider>().refreshInstalledPackages();
     });
   }
 
@@ -450,6 +451,7 @@ class _BrowseAppsScreenState extends State<BrowseAppsScreen> {
 
   Widget _buildAssetCard(Asset asset) {
     final isSelected = _selectedAssets.contains(asset.id);
+    final isInstalled = context.watch<AssetProvider>().isInstalled(asset);
     final theme = Theme.of(context);
 
     return Container(
@@ -515,6 +517,26 @@ class _BrowseAppsScreenState extends State<BrowseAppsScreen> {
                           fontSize: 16,
                         ),
                       ),
+                      if (isInstalled) ...[
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              size: 14,
+                              color: Colors.green.shade600,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Installed',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: Colors.green.shade600,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                       const SizedBox(height: 4),
                       Text(
                         asset.description,
