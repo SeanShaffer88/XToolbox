@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -91,6 +93,69 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void dispose() {
     _bandwidthController.dispose();
     super.dispose();
+  }
+
+  Future<void> _exportSettings(BuildContext context) async {
+    final settingsService = Provider.of<SettingsService>(
+      context,
+      listen: false,
+    );
+    final path = await FilePicker.platform.saveFile(
+      dialogTitle: 'Export Settings',
+      fileName: 'xtoolbox-settings.json',
+      type: FileType.custom,
+      allowedExtensions: ['json'],
+    );
+    if (path == null || !context.mounted) return;
+    try {
+      await File(path).writeAsString(settingsService.exportSettingsJson());
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Settings exported to $path')));
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not export settings: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _importSettings(BuildContext context) async {
+    final settingsService = Provider.of<SettingsService>(
+      context,
+      listen: false,
+    );
+    final result = await FilePicker.platform.pickFiles(
+      dialogTitle: 'Import Settings',
+      type: FileType.custom,
+      allowedExtensions: ['json'],
+    );
+    final path = result?.files.single.path;
+    if (path == null || !context.mounted) return;
+    try {
+      final text = await File(path).readAsString();
+      await settingsService.importSettingsJson(text);
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Settings imported')));
+      }
+    } on FormatException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Import failed: ${e.message}')));
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Import failed: $e')));
+      }
+    }
   }
 
   Future<void> _pickDownloadPath(BuildContext context) async {
@@ -466,6 +531,51 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ],
               ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Backup Section
+          Card(
+            elevation: 0,
+            color: colorScheme.surfaceContainerLow,
+            child: Column(
+              children: [
+                ListTile(
+                  leading: Icon(
+                    Icons.save_outlined,
+                    color: colorScheme.primary,
+                  ),
+                  title: Text(
+                    'Backup',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.upload_file_outlined),
+                  title: const Text('Export Settings'),
+                  subtitle: const Text(
+                    'Save settings, favorites and recent installs to a '
+                    'JSON file',
+                  ),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _exportSettings(context),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.file_download_outlined),
+                  title: const Text('Import Settings'),
+                  subtitle: const Text(
+                    'Apply settings from a previously exported file; '
+                    'only the entries in the file are changed',
+                  ),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _importSettings(context),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 16),
