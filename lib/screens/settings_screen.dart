@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../services/diagnostics_service.dart';
 import '../services/settings_service.dart';
 import '../utils/theme_provider.dart';
 
@@ -35,6 +36,10 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   final TextEditingController _bandwidthController = TextEditingController();
   bool _creditsExpanded = false;
+  bool _diagnosticsExpanded = false;
+  bool _diagnosticsLoading = false;
+  SystemFacts? _diagnosticsFacts;
+  final DiagnosticsService _diagnosticsService = DiagnosticsService();
 
   static const List<_Contributor> _contributors = [
     _Contributor(
@@ -208,6 +213,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
       'web_link' => Icons.open_in_browser,
       _ => Icons.help_outline,
     };
+  }
+
+  Future<void> _loadDiagnostics() async {
+    if (_diagnosticsLoading || _diagnosticsFacts != null) return;
+    setState(() => _diagnosticsLoading = true);
+    final facts = await _diagnosticsService.collect();
+    if (!mounted) return;
+    setState(() {
+      _diagnosticsFacts = facts;
+      _diagnosticsLoading = false;
+    });
+  }
+
+  String? _currentDiagnosticsReport(BuildContext context) {
+    final facts = _diagnosticsFacts;
+    if (facts == null) return null;
+    final settings = Provider.of<SettingsService>(context, listen: false);
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    return DiagnosticsService.buildReport(
+      facts: facts,
+      themeMode: switch (themeProvider.themeMode) {
+        ThemeMode.system => 'System',
+        ThemeMode.light => 'Light',
+        ThemeMode.dark => 'Dark',
+      },
+      downloadPath: settings.downloadPath,
+      bandwidthLimitKbps: settings.bandwidthLimit,
+      httpsOnly: settings.httpsOnly,
+      favoritesCount: settings.favorites.length,
+      recentInstallsCount: settings.recentInstalls.length,
+    );
+  }
+
+  Future<void> _copyDiagnostics(BuildContext context) async {
+    final report = _currentDiagnosticsReport(context);
+    if (report == null) return;
+    await Clipboard.setData(ClipboardData(text: report));
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Diagnostics copied — paste them into your bug report'),
+        ),
+      );
+    }
   }
 
   String _getInstallMethodLabel(String method) {
@@ -575,6 +624,85 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _importSettings(context),
                 ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Diagnostics Section
+          Card(
+            elevation: 0,
+            color: colorScheme.surfaceContainerLow,
+            child: Column(
+              children: [
+                ListTile(
+                  leading: Icon(
+                    Icons.fact_check_outlined,
+                    color: colorScheme.primary,
+                  ),
+                  title: Text(
+                    'Diagnostics',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                  subtitle: const Text(
+                    'The details a bug report needs, gathered for you',
+                  ),
+                  trailing: Icon(
+                    _diagnosticsExpanded
+                        ? Icons.expand_less
+                        : Icons.expand_more,
+                  ),
+                  onTap: () {
+                    setState(
+                      () => _diagnosticsExpanded = !_diagnosticsExpanded,
+                    );
+                    if (_diagnosticsExpanded) _loadDiagnostics();
+                  },
+                ),
+                if (_diagnosticsExpanded) ...[
+                  const Divider(height: 1),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (_diagnosticsLoading)
+                          const Row(
+                            children: [
+                              SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                              SizedBox(width: 12),
+                              Text('Gathering system facts…'),
+                            ],
+                          )
+                        else if (_diagnosticsFacts != null) ...[
+                          SelectableText(
+                            _currentDiagnosticsReport(context) ?? '',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontFamily: 'monospace',
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Center(
+                            child: FilledButton.tonalIcon(
+                              onPressed: () => _copyDiagnostics(context),
+                              icon: const Icon(Icons.copy),
+                              label: const Text('Copy diagnostics'),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
