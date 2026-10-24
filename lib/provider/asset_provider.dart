@@ -51,9 +51,26 @@ class AssetProvider extends ChangeNotifier {
     (m) => m.packageId != null && _installedPackages.containsKey(m.packageId),
   );
 
-  /// Re-queries winget for the installed-package list.
+  /// Packages with a winget upgrade available: id → available version.
+  Map<String, String> _upgradeablePackages = {};
+
+  Map<String, String> get upgradeablePackages => _upgradeablePackages;
+
+  /// The version [packageId] can upgrade to, or null when it is
+  /// current (or not installed through winget).
+  String? upgradeVersionFor(String packageId) =>
+      _upgradeablePackages[packageId];
+
+  /// Whether any install method of [asset] has an upgrade available.
+  bool isUpgradeAvailable(Asset asset) => asset.installMethods.any(
+    (m) => m.packageId != null && _upgradeablePackages.containsKey(m.packageId),
+  );
+
+  /// Re-queries winget for the installed-package list and for the
+  /// upgrades available for them.
   Future<void> refreshInstalledPackages() async {
     _installedPackages = await _wingetService.queryInstalled();
+    _upgradeablePackages = await _wingetService.queryUpgrades();
     notifyListeners();
   }
 
