@@ -40,10 +40,48 @@ class _BrowseAppsScreenState extends State<BrowseAppsScreen> {
   }
 
   String _getCategoryDisplayName(String category) {
+    if (category == 'favorites') return 'Favorites';
+    if (category == 'recent') return 'Recently Installed';
     return category
         .split('_')
         .map((word) => word[0].toUpperCase() + word.substring(1))
         .join(' ');
+  }
+
+  /// A sidebar entry for a virtual category (Favorites, Recently
+  /// Installed), styled like the catalog category entries.
+  Widget _buildVirtualCategoryTile({
+    required String id,
+    required IconData icon,
+    required String label,
+    required int count,
+  }) {
+    final isSelected = _selectedCategory == id;
+    final theme = Theme.of(context);
+    return ListTile(
+      selected: isSelected,
+      leading: Icon(icon),
+      title: Text(label),
+      trailing: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? theme.colorScheme.primary
+              : theme.colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          count.toString(),
+          style: TextStyle(
+            fontSize: 12,
+            color: isSelected
+                ? theme.colorScheme.onPrimary
+                : theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ),
+      onTap: () => setState(() => _selectedCategory = id),
+    );
   }
 
   void _enterSelectionMode(String assetId) {
@@ -323,11 +361,22 @@ class _BrowseAppsScreenState extends State<BrowseAppsScreen> {
 
           final allAssets = assetProvider.assets;
           final categories = _getAvailableCategories(allAssets);
+          final settings = context.watch<SettingsService>();
 
-          // Filter assets by category and search query
-          var filteredAssets = _selectedCategory == 'all'
-              ? allAssets
-              : assetProvider.getAssetsByCategory(_selectedCategory);
+          // Filter assets by category and search query. 'favorites'
+          // and 'recent' are virtual categories backed by
+          // SettingsService rather than the catalog data.
+          var filteredAssets = switch (_selectedCategory) {
+            'all' => allAssets,
+            'favorites' =>
+              allAssets.where((a) => settings.isFavorite(a.id)).toList(),
+            'recent' =>
+              settings.recentInstalls
+                  .map(assetProvider.getAssetById)
+                  .whereType<Asset>()
+                  .toList(),
+            _ => assetProvider.getAssetsByCategory(_selectedCategory),
+          };
 
           if (_searchQuery.isNotEmpty) {
             filteredAssets = filteredAssets.where((asset) {
@@ -358,6 +407,23 @@ class _BrowseAppsScreenState extends State<BrowseAppsScreen> {
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
+                    ),
+                    _buildVirtualCategoryTile(
+                      id: 'favorites',
+                      icon: Icons.star,
+                      label: 'Favorites',
+                      count: allAssets
+                          .where((a) => settings.isFavorite(a.id))
+                          .length,
+                    ),
+                    _buildVirtualCategoryTile(
+                      id: 'recent',
+                      icon: Icons.history,
+                      label: 'Recently Installed',
+                      count: settings.recentInstalls
+                          .map(assetProvider.getAssetById)
+                          .whereType<Asset>()
+                          .length,
                     ),
                     ...categories.map((category) {
                       final isSelected = _selectedCategory == category;
@@ -417,9 +483,17 @@ class _BrowseAppsScreenState extends State<BrowseAppsScreen> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              _searchQuery.isEmpty
-                                  ? 'No packages in this category'
-                                  : 'No packages found matching "$_searchQuery"',
+                              _searchQuery.isNotEmpty
+                                  ? 'No packages found matching "$_searchQuery"'
+                                  : switch (_selectedCategory) {
+                                      'favorites' =>
+                                        'No favorites yet — open a package '
+                                            'and tap the star to pin it here',
+                                      'recent' =>
+                                        'Nothing installed from the '
+                                            'catalog yet',
+                                      _ => 'No packages in this category',
+                                    },
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
                           ],

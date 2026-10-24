@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/asset.dart';
 import '../provider/asset_provider.dart';
 import '../services/install_handler_service.dart';
+import '../services/settings_service.dart';
 import '../utils/iconmap_util.dart';
 
 class ViewItemWidget extends StatelessWidget {
@@ -39,12 +40,20 @@ class ViewItemWidget extends StatelessWidget {
       listen: false,
     );
     final assetProvider = Provider.of<AssetProvider>(context, listen: false);
+    final settings = Provider.of<SettingsService>(context, listen: false);
 
     // Close the dialog first
     Navigator.of(context).pop();
 
     // Use the install handler service which has auto-retry logic
-    await installHandler.handleInstall(method: method, appName: asset.name);
+    final result = await installHandler.handleInstall(
+      method: method,
+      appName: asset.name,
+    );
+
+    if (result == InstallResult.success) {
+      await settings.recordRecentInstall(asset.id);
+    }
 
     // Keep the Installed badges truthful after a package-manager install.
     if (method.packageId != null) {
@@ -128,6 +137,21 @@ class ViewItemWidget extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                    ),
+                    Consumer<SettingsService>(
+                      builder: (context, settings, _) {
+                        final isFavorite = settings.isFavorite(asset.id);
+                        return IconButton(
+                          icon: Icon(
+                            isFavorite ? Icons.star : Icons.star_border,
+                          ),
+                          color: isFavorite ? Colors.amber : null,
+                          tooltip: isFavorite
+                              ? 'Remove from favorites'
+                              : 'Add to favorites',
+                          onPressed: () => settings.toggleFavorite(asset.id),
+                        );
+                      },
                     ),
                     if (asset.homepage.isNotEmpty)
                       IconButton(
