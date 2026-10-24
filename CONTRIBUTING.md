@@ -48,6 +48,28 @@ flutter build windows --release         # or the linux build, if that's your OS
 The analyzer is expected to report **no issues at all**. If your change
 introduces a lint, fix the code rather than suppressing it.
 
+### Catalog link checks
+
+Catalog URLs rot over time, so the catalog's links are checked by
+`tool/check_catalog_links.py` (Python 3, standard library only):
+
+```
+python3 tool/check_catalog_links.py                 # report to stdout
+python3 tool/check_catalog_links.py --output report.md
+```
+
+The checker classifies every download link and homepage as ok, moved
+(permanent redirect — update the catalog), dead (404/410 or an
+unresolvable host — fix or remove the entry), blocked (anti-bot or
+method blocks — verify from a residential connection before acting),
+error (transient or server-side), or skipped. Distro ISO template URLs
+containing `%TOKEN%` placeholders are skipped: the app resolves those
+against each distro's own site at runtime and existence-checks the
+candidates itself. The script exits non-zero only when a link is dead.
+
+A scheduled GitHub Actions workflow (`.github/workflows/link-check.yml`)
+runs the checker weekly and opens an issue when it finds dead links.
+
 ## Adding a tool to the catalog
 
 Most contributions are catalog entries. The catalog is
