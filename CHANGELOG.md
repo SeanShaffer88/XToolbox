@@ -5,6 +5,19 @@ All notable changes to XToolBox are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.4] - 2026-10-23
+
+### Added
+
+- **Installed-state badges.** The app now asks winget what is
+  installed (one `winget export` when Browse opens, refreshed after
+  each package-manager install) and shows it: an "Installed" marker
+  on Browse list entries, and "Installed · v<version>" on the install
+  option in the details dialog. Previously the catalog had no idea
+  what was already on the machine. Detection covers package-manager
+  entries (winget IDs); direct downloads and other types are not
+  probed.
+
 ## [5.3.3] - 2026-10-23
 
 ### Added
