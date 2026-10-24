@@ -52,6 +52,44 @@ class ViewItemWidget extends StatelessWidget {
     }
   }
 
+  Future<void> _handleUninstall(
+    BuildContext context,
+    InstallMethod method,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('Uninstall ${asset.name}?'),
+        content: Text(
+          'Winget will remove ${asset.name} from this PC. '
+          'Its own settings and data may remain. '
+          'You can reinstall it from here at any time.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Uninstall'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final installHandler = Provider.of<InstallHandlerService>(
+      context,
+      listen: false,
+    );
+    final assetProvider = Provider.of<AssetProvider>(context, listen: false);
+
+    Navigator.of(context).pop();
+    await installHandler.handleUninstall(method: method, appName: asset.name);
+    await assetProvider.refreshInstalledPackages();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -180,6 +218,11 @@ class ViewItemWidget extends StatelessWidget {
                                   method.packageId!,
                                 ),
                           onInstall: () => _handleInstall(context, method),
+                          onUninstall:
+                              method.type == InstallType.winget &&
+                                  method.packageId != null
+                              ? () => _handleUninstall(context, method)
+                              : null,
                         ),
                       ),
                     ],
@@ -197,11 +240,13 @@ class ViewItemWidget extends StatelessWidget {
 class _InstallMethodCard extends StatefulWidget {
   final InstallMethod method;
   final VoidCallback onInstall;
+  final VoidCallback? onUninstall;
   final String? installedVersion;
 
   const _InstallMethodCard({
     required this.method,
     required this.onInstall,
+    this.onUninstall,
     this.installedVersion,
   });
 
@@ -310,6 +355,22 @@ class _InstallMethodCardState extends State<_InstallMethodCard> {
                   ),
                 ),
               ),
+              if (widget.installedVersion != null &&
+                  widget.onUninstall != null) ...[
+                const SizedBox(width: 8),
+                OutlinedButton.icon(
+                  onPressed: widget.onUninstall,
+                  icon: const Icon(Icons.delete_outline, size: 18),
+                  label: const Text('Uninstall'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: theme.colorScheme.error,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
