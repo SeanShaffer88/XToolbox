@@ -46,4 +46,17 @@ void main() {
       );
     });
   });
+
+  group('WingetService.uninstallArguments', () {
+    test('builds a silent uninstall by exact id', () {
+      expect(WingetService.uninstallArguments('Microsoft.PowerToys'), [
+        'uninstall',
+        '--id',
+        'Microsoft.PowerToys',
+        '--silent',
+        '--accept-source-agreements',
+        '--disable-interactivity',
+      ]);
+    });
+  });
 }

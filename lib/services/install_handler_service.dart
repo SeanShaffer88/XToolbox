@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'toast_notification_service.dart';
 import 'download_service.dart';
 import 'distro_resolver.dart';
+import 'winget_service.dart';
 import '../models/asset.dart';
 
 enum InstallResult { success, failed, packageManagerNotInstalled, cancelled }
@@ -20,7 +21,11 @@ class InstallHandlerService {
     this._toastService,
     this._downloadService, [
     DistroResolver? distroResolver,
-  ]) : _distroResolver = distroResolver ?? DistroResolver();
+    WingetService? wingetService,
+  ]) : _distroResolver = distroResolver ?? DistroResolver(),
+       _wingetService = wingetService ?? WingetService();
+
+  final WingetService _wingetService;
 
   /// Main install handler that processes install methods with auto-retry logic
   Future<InstallResult> handleInstall({
@@ -68,6 +73,49 @@ class InstallHandlerService {
       }
       if (kDebugMode) {
         print('Install error: $e');
+      }
+      return InstallResult.failed;
+    }
+  }
+
+  /// Uninstalls a winget package, with the same toast reporting as
+  /// installs. Only winget methods can be uninstalled this way; the
+  /// caller confirms with the user first.
+  Future<InstallResult> handleUninstall({
+    required InstallMethod method,
+    required String appName,
+  }) async {
+    if (method.type != InstallType.winget || method.packageId == null) {
+      return InstallResult.failed;
+    }
+    String? toastId;
+    try {
+      toastId = _toastService.addNotification(
+        title: 'Uninstalling $appName',
+        message: 'Using Winget...',
+        status: ToastStatus.pending,
+      );
+      _toastService.updateNotification(
+        id: toastId,
+        status: ToastStatus.inProgress,
+        message: 'Uninstalling...',
+      );
+      final ok = await _wingetService.uninstall(method.packageId!);
+      _toastService.updateNotification(
+        id: toastId,
+        status: ok ? ToastStatus.success : ToastStatus.error,
+        message: ok
+            ? '$appName uninstalled'
+            : 'Winget could not uninstall $appName',
+      );
+      return ok ? InstallResult.success : InstallResult.failed;
+    } catch (e) {
+      if (toastId != null) {
+        _toastService.updateNotification(
+          id: toastId,
+          status: ToastStatus.error,
+          message: 'Uninstall failed: ${e.toString()}',
+        );
       }
       return InstallResult.failed;
     }
