@@ -526,6 +526,7 @@ class _BrowseAppsScreenState extends State<BrowseAppsScreen> {
   Widget _buildAssetCard(Asset asset) {
     final isSelected = _selectedAssets.contains(asset.id);
     final isInstalled = context.watch<AssetProvider>().isInstalled(asset);
+    final hasUpgrade = context.watch<AssetProvider>().isUpgradeAvailable(asset);
     final theme = Theme.of(context);
 
     return Container(
@@ -605,6 +606,26 @@ class _BrowseAppsScreenState extends State<BrowseAppsScreen> {
                               'Installed',
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: Colors.green.shade600,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                      if (hasUpgrade) ...[
+                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.upgrade,
+                              size: 14,
+                              color: Colors.amber.shade800,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Update available',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: Colors.amber.shade800,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

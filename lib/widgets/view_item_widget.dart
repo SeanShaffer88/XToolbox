@@ -99,6 +99,21 @@ class ViewItemWidget extends StatelessWidget {
     await assetProvider.refreshInstalledPackages();
   }
 
+  Future<void> _handleUpgrade(
+    BuildContext context,
+    InstallMethod method,
+  ) async {
+    final installHandler = Provider.of<InstallHandlerService>(
+      context,
+      listen: false,
+    );
+    final assetProvider = Provider.of<AssetProvider>(context, listen: false);
+
+    Navigator.of(context).pop();
+    await installHandler.handleUpgrade(method: method, appName: asset.name);
+    await assetProvider.refreshInstalledPackages();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -241,11 +256,21 @@ class ViewItemWidget extends StatelessWidget {
                               : assetProvider.installedVersionFor(
                                   method.packageId!,
                                 ),
+                          upgradeVersion: method.packageId == null
+                              ? null
+                              : assetProvider.upgradeVersionFor(
+                                  method.packageId!,
+                                ),
                           onInstall: () => _handleInstall(context, method),
                           onUninstall:
                               method.type == InstallType.winget &&
                                   method.packageId != null
                               ? () => _handleUninstall(context, method)
+                              : null,
+                          onUpgrade:
+                              method.type == InstallType.winget &&
+                                  method.packageId != null
+                              ? () => _handleUpgrade(context, method)
                               : null,
                         ),
                       ),
@@ -265,13 +290,17 @@ class _InstallMethodCard extends StatefulWidget {
   final InstallMethod method;
   final VoidCallback onInstall;
   final VoidCallback? onUninstall;
+  final VoidCallback? onUpgrade;
   final String? installedVersion;
+  final String? upgradeVersion;
 
   const _InstallMethodCard({
     required this.method,
     required this.onInstall,
     this.onUninstall,
+    this.onUpgrade,
     this.installedVersion,
+    this.upgradeVersion,
   });
 
   @override
@@ -363,6 +392,26 @@ class _InstallMethodCardState extends State<_InstallMethodCard> {
                         ],
                       ),
                     ],
+                    if (widget.upgradeVersion != null) ...[
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.upgrade,
+                            size: 16,
+                            color: Colors.amber.shade800,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Update available · v${widget.upgradeVersion}',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: Colors.amber.shade800,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -379,6 +428,22 @@ class _InstallMethodCardState extends State<_InstallMethodCard> {
                   ),
                 ),
               ),
+              if (widget.installedVersion != null &&
+                  widget.upgradeVersion != null &&
+                  widget.onUpgrade != null) ...[
+                const SizedBox(width: 8),
+                OutlinedButton.icon(
+                  onPressed: widget.onUpgrade,
+                  icon: const Icon(Icons.upgrade, size: 18),
+                  label: const Text('Upgrade'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                  ),
+                ),
+              ],
               if (widget.installedVersion != null &&
                   widget.onUninstall != null) ...[
                 const SizedBox(width: 8),
