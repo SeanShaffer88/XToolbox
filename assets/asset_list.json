@@ -35,7 +35,8 @@
                 "type": "direct_download",
                 "label": "Installer",
                 "url": "https://github.com/rocksdanister/lively/releases/download/v2.2.1.0/lively_setup_x86_full_v2210.exe",
-                "filename": "lively_setup_x86_full_v2210.exe"
+                "filename": "lively_setup_x86_full_v2210.exe",
+                "sha256": "98f4e96bb8e2c416384eeaf48016eadaea9dce8263b8d212052775ebcf2d7e34"
             },
             {
                 "type": "winget",
@@ -130,7 +131,8 @@
                 "type": "direct_download",
                 "label": "Launch Application",
                 "filename": "MajorPrivacy.exe",
-                "url": "https://github.com/xanasoft/MajorPrivacy/releases/download/v0.99.5/MajorPrivacy-v0.99.5.exe"
+                "url": "https://github.com/xanasoft/MajorPrivacy/releases/download/v0.99.5/MajorPrivacy-v0.99.5.exe",
+                "sha256": "65f8a135aaa597bf80ced977e4c4aab7f0208c8d5c6805a62282abcb28bb8bd2"
             }
         ]
     },
@@ -214,7 +216,8 @@
                 "type": "direct_download",
                 "label": "Installer",
                 "filename": "PrivacySexy-setup.exe",
-                "url": "https://github.com/undergroundwires/privacy.sexy/releases/download/0.13.8/privacy.sexy-Setup-0.13.8.exe"
+                "url": "https://github.com/undergroundwires/privacy.sexy/releases/download/0.13.8/privacy.sexy-Setup-0.13.8.exe",
+                "sha256": "0bb77a78565591ca475cf5f70880895653253266bc153034402b33f6be1d601b"
             }
         ]
     },
@@ -321,7 +324,8 @@
                 "type": "direct_download",
                 "label": "Installer",
                 "filename": "Rainmeter-Setup.exe",
-                "url": "https://github.com/rainmeter/rainmeter/releases/download/v4.5.17.3700/Rainmeter-4.5.17.exe"
+                "url": "https://github.com/rainmeter/rainmeter/releases/download/v4.5.17.3700/Rainmeter-4.5.17.exe",
+                "sha256": "25e20c173d4e8f0515a7f67178fec269f808e94d66d35f8bed0d3ebb3226e0aa"
             }
         ]
     },
@@ -338,7 +342,8 @@
                 "type": "direct_download",
                 "label": "Installer",
                 "filename": "7Zip-zstd.exe",
-                "url": "https://github.com/mcmilk/7-Zip-zstd/releases/download/v22.01-v1.5.5-R3/7z22.01-zstd-x64.exe"
+                "url": "https://github.com/mcmilk/7-Zip-zstd/releases/download/v22.01-v1.5.5-R3/7z22.01-zstd-x64.exe",
+                "sha256": "d542d78397bbed8e77c221f36cad461a0d83f1263b993a7048e81df40f403fb8"
             }
         ]
     },
@@ -1005,13 +1010,15 @@
                 "type": "direct_download",
                 "label": "Installer",
                 "filename": "imFile-Setup.exe",
-                "url": "https://github.com/imfile-io/imfile-desktop/releases/download/v1.1.2/imFile-Setup-1.1.2.exe"
+                "url": "https://github.com/imfile-io/imfile-desktop/releases/download/v1.1.2/imFile-Setup-1.1.2.exe",
+                "sha256": "ae4e03dfb2034474f58f63ee44e54da7deacff250a6df6f1c4ec88ac90704b5d"
             },
             {
                 "type": "direct_download",
                 "label": "Portable",
                 "filename": "imFile.exe",
-                "url": "https://github.com/imfile-io/imfile-desktop/releases/download/v1.1.2/imFile-1.1.2-x64.exe"
+                "url": "https://github.com/imfile-io/imfile-desktop/releases/download/v1.1.2/imFile-1.1.2-x64.exe",
+                "sha256": "94d052090387465f69c93783a69cf483d976379c65b364ded3d2dd901f54faf9"
             }
         ]
     },
@@ -1050,7 +1057,8 @@
                 "type": "direct_download",
                 "label": "VSCodium",
                 "filename": "VSCodium-Setup.msi",
-                "url": "https://github.com/VSCodium/vscodium/releases/download/1.106.37938/VSCodium-x64-1.106.37938.msi"
+                "url": "https://github.com/VSCodium/vscodium/releases/download/1.106.37938/VSCodium-x64-1.106.37938.msi",
+                "sha256": "2bb4613295ad02e6ca800a313c0fce64ab6d9b80123b5fd074c429ca765c811d"
             },
             {
                 "type": "direct_download",
@@ -1073,7 +1081,8 @@
                 "type": "direct_download",
                 "label": "Installer",
                 "filename": "PrismLauncher-Setup.exe",
-                "url": "https://github.com/PrismLauncher/PrismLauncher/releases/download/9.4/PrismLauncher-Windows-MSVC-Setup-9.4.exe"
+                "url": "https://github.com/PrismLauncher/PrismLauncher/releases/download/9.4/PrismLauncher-Windows-MSVC-Setup-9.4.exe",
+                "sha256": "15f8c7dc20bc98e803270c21125ac3f8178fbabae7bdf142c5c2f5596802342d"
             }
         ]
     },
@@ -1223,7 +1232,8 @@
                 "type": "direct_download",
                 "label": "Installer",
                 "filename": "Rare-Setup.msi",
-                "url": "https://github.com/RareDevs/Rare/releases/download/1.11.3.286/Rare-1.11.3.286.msi"
+                "url": "https://github.com/RareDevs/Rare/releases/download/1.11.3.286/Rare-1.11.3.286.msi",
+                "sha256": "88aa16205ac45093dc3d17814728531e2356e01ab25465c1dd8f067e8aa28896"
             }
         ]
     },
@@ -1274,7 +1284,8 @@
                 "type": "direct_download",
                 "label": "Installer",
                 "filename": "Bloxstrap-Setup.exe",
-                "url": "https://github.com/bloxstraplabs/bloxstrap/releases/download/v2.10.0/Bloxstrap-v2.10.0.exe"
+                "url": "https://github.com/bloxstraplabs/bloxstrap/releases/download/v2.10.0/Bloxstrap-v2.10.0.exe",
+                "sha256": "cc96db7c48a2abfd117657d5dd822e91b43f31205047d56bcce1a82a60d1f9d0"
             }
         ]
     },
@@ -1476,25 +1487,29 @@
                 "type": "direct_download",
                 "label": "Legcord",
                 "filename": "Legcord-Setup.exe",
-                "url": "https://github.com/Legcord/Legcord/releases/download/v1.1.6/Legcord-1.1.6-win-x64.exe"
+                "url": "https://github.com/Legcord/Legcord/releases/download/v1.1.6/Legcord-1.1.6-win-x64.exe",
+                "sha256": "8691fce6763e2d36f49ebc8f71c7b33c4c27d9411a00668e5b453dc9611ffde6"
             },
             {
                 "type": "direct_download",
                 "label": "Dorion",
                 "filename": "Dorion-Setup.exe",
-                "url": "https://github.com/SpikeHD/Dorion/releases/download/v6.11.0/Dorion_6.11.0_x64-setup.exe"
+                "url": "https://github.com/SpikeHD/Dorion/releases/download/v6.11.0/Dorion_6.11.0_x64-setup.exe",
+                "sha256": "7fe3b89c8dbdb22c3e5d6adca99204b607128cc8547afe2eb244185777bc063f"
             },
             {
                 "type": "direct_download",
                 "label": "Equibop",
                 "filename": "Equibop-Setup.exe",
-                "url": "https://github.com/Equicord/Equibop/releases/download/v3.1.3/Equibop-Setup-3.1.3.exe"
+                "url": "https://github.com/Equicord/Equibop/releases/download/v3.1.3/Equibop-Setup-3.1.3.exe",
+                "sha256": "8315750cef909fa5a516c76a12255a34a2a6c9de118ebe4d3a24b72a4873754a"
             },
             {
                 "type": "direct_download",
                 "label": "Vesktop",
                 "filename": "Vesktop-Setup.exe",
-                "url": "https://github.com/Vencord/Vesktop/releases/download/v1.6.1/Vesktop-Setup-1.6.1.exe"
+                "url": "https://github.com/Vencord/Vesktop/releases/download/v1.6.1/Vesktop-Setup-1.6.1.exe",
+                "sha256": "efd29c5af12dd2650b000a0e2f493fd5950b2570075560a0c90738273920b564"
             },
             {
                 "type": "direct_download",
