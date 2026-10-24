@@ -9,6 +9,7 @@ import 'utils/theme_provider.dart';
 import 'provider/asset_provider.dart';
 import 'services/toast_notification_service.dart';
 import 'services/download_service.dart';
+import 'services/history_service.dart';
 import 'services/install_handler_service.dart';
 import 'services/playbook_service.dart';
 import 'services/update_service.dart';
@@ -37,13 +38,21 @@ Future<void> main() async {
           update: (_, toastService, settingsService, _) =>
               DownloadService(toastService, settingsService),
         ),
-        ProxyProvider2<
+        Provider<HistoryService>(create: (_) => HistoryService()),
+        ProxyProvider3<
           ToastNotificationService,
           DownloadService,
+          HistoryService,
           InstallHandlerService
         >(
-          update: (_, toastService, downloadService, _) =>
-              InstallHandlerService(toastService, downloadService),
+          update: (_, toastService, downloadService, historyService, _) =>
+              InstallHandlerService(
+                toastService,
+                downloadService,
+                null,
+                null,
+                historyService,
+              ),
         ),
         ChangeNotifierProxyProvider2<
           ToastNotificationService,
