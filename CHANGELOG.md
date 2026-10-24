@@ -5,6 +5,19 @@ All notable changes to XToolBox are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.11] - 2026-10-23
+
+### Added
+
+- **Diagnostics panel in Settings.** A new Diagnostics section
+  gathers the details every bug report needs — app version, Windows
+  edition and build, the winget and Chocolatey versions found on the
+  machine, and the current theme and download settings — and shows
+  them as one plain-text block. The Copy diagnostics button puts that
+  exact block on the clipboard, ready to paste into a bug report; no
+  more hunting through Windows Settings to answer "which build are
+  you on?".
+
 ## [5.3.10] - 2026-10-23
 
 ### Added
