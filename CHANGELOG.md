@@ -5,6 +5,17 @@ All notable changes to XToolBox are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.14] - 2026-10-24
+
+### Added
+
+- **Install history.** A new History page in the main navigation
+  records every install, uninstall, and upgrade — the tool, the
+  method used, whether it succeeded, and when — persisted across
+  restarts (capped at the 200 most recent actions). Failed installs
+  get a **Retry** button that re-runs the same catalog method, and
+  the whole log can be cleared from the page after a confirmation.
+
 ## [5.3.13] - 2026-10-24
 
 ### Added
