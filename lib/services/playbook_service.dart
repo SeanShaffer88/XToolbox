@@ -62,10 +62,69 @@ class PlaybookService extends ChangeNotifier {
     }
   }
 
-  /// Fetches [url] after enforcing the HTTPS-only download setting.
-  Future<http.Response> _fetch(String url) {
+  /// Downloads [url] to [target] as a stream, enforcing the
+  /// HTTPS-only setting first. [onFraction] is called with the
+  /// download fraction (0–1) as bytes arrive — throttled to ~1%
+  /// steps — or with null when the server gives no total size.
+  /// Streaming replaces the old whole-body fetch, whose callers
+  /// could only show fixed stage percentages while a large playbook
+  /// or CLI bundle was in flight.
+  Future<void> _downloadToFile(
+    String url,
+    File target, {
+    void Function(double? fraction)? onFraction,
+  }) async {
     ensureDownloadAllowed(url, httpsOnly: _settingsService?.httpsOnly ?? false);
-    return http.get(Uri.parse(url));
+    final request = http.Request('GET', Uri.parse(url));
+    final response = await request.send();
+    if (response.statusCode != 200) {
+      throw Exception('Failed to download $url: HTTP ${response.statusCode}');
+    }
+    final total = response.contentLength ?? -1;
+    var lastReported = -1.0;
+    await writeStreamToFile(
+      response.stream,
+      target,
+      totalBytes: total,
+      onBytes: (received, totalBytes) {
+        if (onFraction == null) return;
+        if (totalBytes <= 0) {
+          onFraction(null);
+          return;
+        }
+        final fraction = received / totalBytes;
+        if ((fraction - lastReported).abs() >= 0.01 || fraction >= 1.0) {
+          lastReported = fraction;
+          onFraction(fraction);
+        }
+      },
+    );
+  }
+
+  /// Writes [stream] to [target], reporting cumulative bytes through
+  /// [onBytes] after each chunk. Callers map the streamed fraction
+  /// into their stage band of the one overall progress value (the
+  /// CLI download owns 0.1–0.3, the playbook file 0.5–0.6), so the
+  /// bar moves truthfully while bytes arrive instead of jumping
+  /// between fixed stage values.
+  @visibleForTesting
+  static Future<void> writeStreamToFile(
+    Stream<List<int>> stream,
+    File target, {
+    required int totalBytes,
+    required void Function(int received, int totalBytes) onBytes,
+  }) async {
+    final sink = target.openWrite();
+    var received = 0;
+    try {
+      await for (final chunk in stream) {
+        received += chunk.length;
+        sink.add(chunk);
+        onBytes(received, totalBytes);
+      }
+    } finally {
+      await sink.close();
+    }
   }
 
   Future<String> get _workingDirectory async {
@@ -209,10 +268,20 @@ class PlaybookService extends ChangeNotifier {
       progress: 0.1,
     );
 
-    final response = await _fetch(cliDownloadUrl);
-    if (response.statusCode != 200) {
-      throw Exception('Failed to download CLI: ${response.statusCode}');
-    }
+    final zipFile = File('$workDir/CLI-Standalone.zip');
+    await _downloadToFile(
+      cliDownloadUrl,
+      zipFile,
+      onFraction: (fraction) {
+        if (fraction != null) {
+          _updateStatus(
+            PlaybookStatus.downloadingCLI,
+            'Downloading TrustedUninstaller CLI...',
+            progress: 0.1 + fraction * 0.2,
+          );
+        }
+      },
+    );
 
     _updateStatus(
       PlaybookStatus.extractingCLI,
@@ -220,7 +289,8 @@ class PlaybookService extends ChangeNotifier {
       progress: 0.3,
     );
 
-    final archive = ZipDecoder().decodeBytes(response.bodyBytes);
+    final archive = ZipDecoder().decodeBytes(await zipFile.readAsBytes());
+    await zipFile.delete();
     final cliDir = Directory('$workDir/CLI-Standalone');
 
     if (await cliDir.exists()) {
@@ -252,14 +322,21 @@ class PlaybookService extends ChangeNotifier {
       progress: 0.5,
     );
 
-    final response = await _fetch(playbook.downloadUrl);
-    if (response.statusCode != 200) {
-      throw Exception('Failed to download playbook: ${response.statusCode}');
-    }
-
     final filename = playbook.downloadUrl.split('/').last;
     final file = File('$workDir/$filename');
-    await file.writeAsBytes(response.bodyBytes);
+    await _downloadToFile(
+      playbook.downloadUrl,
+      file,
+      onFraction: (fraction) {
+        if (fraction != null) {
+          _updateStatus(
+            PlaybookStatus.downloadingPlaybook,
+            'Downloading ${playbook.name}...',
+            progress: 0.5 + fraction * 0.1,
+          );
+        }
+      },
+    );
 
     _updateStatus(
       PlaybookStatus.downloadingPlaybook,
@@ -534,11 +611,7 @@ class PlaybookService extends ChangeNotifier {
     final workDir = await _workingDirectory;
     final sevenZipExe = '$workDir/7zr.exe';
     if (!await File(sevenZipExe).exists()) {
-      final response = await _fetch(sevenZipDownloadUrl);
-      if (response.statusCode != 200) {
-        throw Exception('Failed to download 7-Zip: ${response.statusCode}');
-      }
-      await File(sevenZipExe).writeAsBytes(response.bodyBytes);
+      await _downloadToFile(sevenZipDownloadUrl, File(sevenZipExe));
     }
     return sevenZipExe;
   }
