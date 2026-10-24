@@ -5,6 +5,18 @@ All notable changes to XToolBox are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.7] - 2026-10-23
+
+### Added
+
+- **Downloads resume after interruptions.** A dropped connection no
+  longer throws away the bytes already fetched: each download now
+  retries up to 3 times, resuming from the partial file with a Range
+  request when the server supports it (and restarting cleanly when
+  it doesn't). HTTP error statuses still fail immediately — they are
+  answers, not glitches — and a download that ultimately fails still
+  deletes its partial file, so no truncated installer is left behind.
+
 ## [5.3.6] - 2026-10-23
 
 ### Added

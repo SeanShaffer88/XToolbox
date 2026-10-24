@@ -36,6 +36,175 @@ class DownloadService {
     return Uri.tryParse(url)?.scheme.toLowerCase() == 'https';
   }
 
+  /// How many times one [downloadFile] call attempts the transfer
+  /// before giving up.
+  static const int maxDownloadAttempts = 3;
+
+  /// The Range header that resumes a partial download of
+  /// [existingBytes] bytes (empty when starting fresh).
+  @visibleForTesting
+  static Map<String, String> rangeHeaders(int existingBytes) =>
+      existingBytes > 0 ? {'Range': 'bytes=$existingBytes-'} : {};
+
+  /// Whether a response continues an existing partial file (HTTP 206)
+  /// rather than starting over.
+  @visibleForTesting
+  static bool shouldAppend({
+    required int statusCode,
+    required int existingBytes,
+  }) => statusCode == 206 && existingBytes > 0;
+
+  /// The total resource size from a `Content-Range` header
+  /// (`bytes 4000-9999/10000` → 10000), or null when unavailable.
+  @visibleForTesting
+  static int? totalFromContentRange(String? header) {
+    if (header == null) return null;
+    final slash = header.lastIndexOf('/');
+    if (slash < 0) return null;
+    final total = int.tryParse(header.substring(slash + 1).trim());
+    return (total != null && total > 0) ? total : null;
+  }
+
+  /// Downloads [url] to [outputFile] with resume-and-retry: a dropped
+  /// connection no longer discards the bytes already fetched. Each
+  /// attempt resumes from the partial file when the server honors
+  /// Range requests. HTTP error statuses are thrown immediately —
+  /// they are answers, not glitches. Throws the last error when every
+  /// attempt fails; the caller still removes the partial file, so a
+  /// failed download never leaves a truncated installer behind.
+  Future<void> _downloadWithResume({
+    required String url,
+    required File outputFile,
+    required String toastId,
+    required int? limitBytesPerSecond,
+  }) async {
+    Object? lastError;
+    for (var attempt = 1; attempt <= maxDownloadAttempts; attempt++) {
+      try {
+        await _downloadAttempt(
+          url: url,
+          outputFile: outputFile,
+          toastId: toastId,
+          limitBytesPerSecond: limitBytesPerSecond,
+        );
+        return;
+      } on _HttpStatusError {
+        rethrow;
+      } catch (e) {
+        lastError = e;
+        if (attempt < maxDownloadAttempts) {
+          _toastService.updateNotification(
+            id: toastId,
+            message:
+                'Connection interrupted — retrying (attempt '
+                '${attempt + 1} of $maxDownloadAttempts)...',
+            progress: null,
+          );
+          await Future.delayed(Duration(seconds: attempt));
+        }
+      }
+    }
+    throw lastError ?? Exception('Download failed');
+  }
+
+  /// One transfer attempt: streams the response to [outputFile],
+  /// appending when resuming a partial file.
+  Future<void> _downloadAttempt({
+    required String url,
+    required File outputFile,
+    required String toastId,
+    required int? limitBytesPerSecond,
+  }) async {
+    var existingBytes = await outputFile.exists()
+        ? await outputFile.length()
+        : 0;
+
+    final request = http.Request('GET', Uri.parse(url));
+
+    // No manual Accept-Encoding: the HTTP client already negotiates and
+    // decodes compression. Asking for Brotli here would save compressed
+    // bytes to disk, corrupting installers and archives.
+    request.headers.addAll({
+      'User-Agent':
+          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, '
+          'like Gecko) Chrome/131.0.0.0 Safari/537.36',
+      'Accept': '*/*',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Upgrade-Insecure-Requests': '1',
+      ...rangeHeaders(existingBytes),
+    });
+
+    final response = await request.send();
+
+    if (response.statusCode == 416 && existingBytes > 0) {
+      // The resume offset is past the end of the resource: the
+      // partial file is unusable. Drop it and let the retry start
+      // fresh.
+      await outputFile.delete();
+      throw const _RetryableDownloadError(
+        'Server rejected the resume offset; restarting the download',
+      );
+    }
+    if (response.statusCode != 200 && response.statusCode != 206) {
+      throw _HttpStatusError(response.statusCode);
+    }
+
+    final append = shouldAppend(
+      statusCode: response.statusCode,
+      existingBytes: existingBytes,
+    );
+    if (!append) existingBytes = 0;
+
+    final totalBytes = response.statusCode == 206
+        ? totalFromContentRange(response.headers['content-range']) ??
+              existingBytes + (response.contentLength ?? 0)
+        : (response.contentLength ?? 0);
+
+    var bytesDownloaded = existingBytes;
+    final stopwatch = Stopwatch()..start();
+    final sink = outputFile.openWrite(
+      mode: append ? FileMode.append : FileMode.write,
+    );
+
+    try {
+      await for (final chunk in response.stream) {
+        bytesDownloaded += chunk.length;
+        sink.add(chunk);
+
+        final delay = throttleDelay(
+          bytesDownloaded: bytesDownloaded,
+          limitBytesPerSecond: limitBytesPerSecond,
+          elapsed: stopwatch.elapsed,
+        );
+        if (delay > Duration.zero) {
+          await Future.delayed(delay);
+        }
+
+        if (totalBytes > 0) {
+          _toastService.updateNotification(
+            id: toastId,
+            progress: bytesDownloaded / totalBytes,
+            message:
+                'Downloaded ${_formatBytes(bytesDownloaded)} / '
+                '${_formatBytes(totalBytes)}',
+          );
+        }
+      }
+    } finally {
+      await sink.close();
+    }
+
+    // A stream can also end early without an error; with a known
+    // total, that is a truncated file — fail so the retry resumes it
+    // instead of the caller treating it as complete.
+    if (totalBytes > 0 && bytesDownloaded < totalBytes) {
+      throw _RetryableDownloadError(
+        'Connection closed early at ${_formatBytes(bytesDownloaded)} '
+        'of ${_formatBytes(totalBytes)}',
+      );
+    }
+  }
+
   /// The SHA-256 digest of [file], streamed so large images do not
   /// have to fit in memory.
   static Future<String> sha256OfFile(File file) async {
@@ -149,15 +318,22 @@ class DownloadService {
       }
 
       // Downloads directory: the configured download path (Settings)
-      // when one is set, otherwise the system Downloads folder.
-      final systemDownloadsDir = await getDownloadsDirectory();
-      if (systemDownloadsDir == null) {
+      // when one is set, otherwise the system Downloads folder. The
+      // system folder is only queried when needed: resolving it needs
+      // a platform plugin, a configured path does not.
+      final configuredPath = _settingsService?.downloadPath;
+      final hasConfiguredPath =
+          configuredPath != null && configuredPath.trim().isNotEmpty;
+      final systemDownloadsDir = hasConfiguredPath
+          ? null
+          : await getDownloadsDirectory();
+      if (!hasConfiguredPath && systemDownloadsDir == null) {
         throw Exception('Could not access downloads directory');
       }
       final downloadsDir = Directory(
         effectiveDownloadPath(
-          configuredPath: _settingsService?.downloadPath,
-          defaultPath: systemDownloadsDir.path,
+          configuredPath: configuredPath,
+          defaultPath: systemDownloadsDir?.path ?? configuredPath!.trim(),
         ),
       );
       if (!await downloadsDir.exists()) {
@@ -176,65 +352,19 @@ class DownloadService {
       );
 
       outputFile = File(filePath);
-      final request = http.Request('GET', Uri.parse(url));
-
-      // No manual Accept-Encoding: the HTTP client already negotiates and
-      // decodes compression. Asking for Brotli here would save compressed
-      // bytes to disk, corrupting installers and archives.
-      request.headers.addAll({
-        'User-Agent':
-            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, '
-            'like Gecko) Chrome/131.0.0.0 Safari/537.36',
-        'Accept': '*/*',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Upgrade-Insecure-Requests': '1',
-      });
-
-      final response = await request.send();
-
-      if (response.statusCode != 200) {
-        throw Exception('Failed to download: HTTP ${response.statusCode}');
-      }
-
-      final contentLength = response.contentLength ?? 0;
-      int bytesDownloaded = 0;
 
       // Bandwidth limit (Settings), stored as KB/s; 1 KB = 1024 bytes.
       final limitKbps = _settingsService?.bandwidthLimit;
       final limitBytesPerSecond = (limitKbps != null && limitKbps > 0)
           ? limitKbps * 1024
           : null;
-      final stopwatch = Stopwatch()..start();
 
-      final sink = outputFile.openWrite();
-
-      try {
-        await for (final chunk in response.stream) {
-          bytesDownloaded += chunk.length;
-          sink.add(chunk);
-
-          final delay = throttleDelay(
-            bytesDownloaded: bytesDownloaded,
-            limitBytesPerSecond: limitBytesPerSecond,
-            elapsed: stopwatch.elapsed,
-          );
-          if (delay > Duration.zero) {
-            await Future.delayed(delay);
-          }
-
-          if (contentLength > 0) {
-            _toastService.updateNotification(
-              id: toastId,
-              progress: bytesDownloaded / contentLength,
-              message:
-                  'Downloaded ${_formatBytes(bytesDownloaded)} / '
-                  '${_formatBytes(contentLength)}',
-            );
-          }
-        }
-      } finally {
-        await sink.close();
-      }
+      await _downloadWithResume(
+        url: url,
+        outputFile: outputFile,
+        toastId: toastId,
+        limitBytesPerSecond: limitBytesPerSecond,
+      );
       downloadCompleted = true;
 
       // Integrity check: when the catalog pins a SHA-256 for this
@@ -368,4 +498,23 @@ class DownloadService {
     }
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
   }
+}
+
+/// An HTTP error status from the download server. Not retried: the
+/// server answered, and the answer will not change by asking again.
+class _HttpStatusError implements Exception {
+  final int statusCode;
+  const _HttpStatusError(this.statusCode);
+
+  @override
+  String toString() => 'Failed to download: HTTP $statusCode';
+}
+
+/// A transfer failure that a resumed attempt may be able to finish.
+class _RetryableDownloadError implements Exception {
+  final String message;
+  const _RetryableDownloadError(this.message);
+
+  @override
+  String toString() => message;
 }
