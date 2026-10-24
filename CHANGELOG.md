@@ -5,6 +5,19 @@ All notable changes to XToolBox are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.13] - 2026-10-24
+
+### Added
+
+- **Winget upgrade detection.** Installed badges told you a tool
+  was present but not whether it was stale. Browse now also marks
+  tools with an upgrade waiting ("Update available" under the
+  Installed marker), the details dialog shows "Update available ·
+  v…" with the version on offer, and an **Upgrade** button next to
+  Uninstall runs the upgrade through winget with the usual progress
+  toasts. State refreshes whenever Browse opens and after every
+  install, upgrade, or uninstall.
+
 ## [5.3.12] - 2026-10-24
 
 ### Added
