@@ -5,6 +5,19 @@ All notable changes to XToolBox are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.9] - 2026-10-23
+
+### Added
+
+- **Settings export and import.** A new Backup section in Settings
+  saves every portable setting — preferences, install-method order,
+  favorites, and recent installs — to a JSON file, and imports one
+  back. Import validates the file first (types, bandwidth range,
+  format version) and reports exactly which entry is wrong instead
+  of applying a corrupt file; only the entries present in the file
+  are changed, and files from a newer app version are refused with
+  an explanation.
+
 ## [5.3.8] - 2026-10-23
 
 ### Changed
