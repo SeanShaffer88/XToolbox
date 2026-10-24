@@ -59,4 +59,68 @@ void main() {
       ]);
     });
   });
+
+  group('WingetService.parseUpgradeTable', () {
+    // Column layout mirrors real `winget upgrade` output: the parser
+    // slices rows at the header's column positions.
+    const header =
+        'Name                          Id                            Version       Available     Source';
+    const separator =
+        '----------------------------------------------------------------------------------------------';
+
+    String table(List<String> rows) =>
+        [header, separator, ...rows, '', '2 upgrades available.'].join('\n');
+
+    test('extracts id → available version for each row', () {
+      final result = WingetService.parseUpgradeTable(
+        table([
+          'Git                           Git.Git                       2.45.1        2.47.0.2      winget',
+          'PowerToys (x64)               Microsoft.PowerToys           0.85.1        0.86.0        winget',
+        ]),
+      );
+      expect(result, {'Git.Git': '2.47.0.2', 'Microsoft.PowerToys': '0.86.0'});
+    });
+
+    test('works without a Source column', () {
+      final result = WingetService.parseUpgradeTable(
+        [
+          'Name                          Id                            Version       Available',
+          separator,
+          'Git                           Git.Git                       2.45.1        2.47.0.2',
+        ].join('\n'),
+      );
+      expect(result, {'Git.Git': '2.47.0.2'});
+    });
+
+    test('no-upgrade and empty outputs parse to an empty map', () {
+      expect(WingetService.parseUpgradeTable(''), isEmpty);
+      expect(
+        WingetService.parseUpgradeTable('No available upgrade found.'),
+        isEmpty,
+      );
+      expect(WingetService.parseUpgradeTable(table([])), isEmpty);
+    });
+  });
+
+  group('WingetService.upgradeArguments', () {
+    test('builds a silent upgrade by exact id', () {
+      expect(WingetService.upgradeArguments('Git.Git'), [
+        'upgrade',
+        '--id',
+        'Git.Git',
+        '--silent',
+        '--accept-package-agreements',
+        '--accept-source-agreements',
+        '--disable-interactivity',
+      ]);
+    });
+
+    test('the upgrade query accepts source agreements non-interactively', () {
+      expect(WingetService.upgradeQueryArguments(), [
+        'upgrade',
+        '--accept-source-agreements',
+        '--disable-interactivity',
+      ]);
+    });
+  });
 }
