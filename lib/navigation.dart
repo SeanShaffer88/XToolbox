@@ -4,6 +4,7 @@ import 'screens/home_screen.dart';
 import 'screens/browse_apps_screen.dart';
 import 'screens/playbook_setup_screen.dart';
 import 'screens/cleanup_screen.dart';
+import 'screens/history_screen.dart';
 import 'screens/settings_screen.dart';
 
 class NavigationPage extends StatefulWidget {
@@ -21,6 +22,7 @@ class _NavigationPageState extends State<NavigationPage> {
     BrowseAppsScreen(),
     PlaybookSetupScreen(),
     CleanupScreen(),
+    HistoryScreen(),
     SettingsScreen(),
   ];
 
@@ -60,6 +62,11 @@ class _NavigationPageState extends State<NavigationPage> {
                         icon: Icon(Icons.cleaning_services_outlined),
                         selectedIcon: Icon(Icons.cleaning_services),
                         label: Text('Cleanup'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.history_outlined),
+                        selectedIcon: Icon(Icons.history),
+                        label: Text('History'),
                       ),
                       NavigationRailDestination(
                         icon: Icon(Icons.settings_outlined),
@@ -102,6 +109,11 @@ class _NavigationPageState extends State<NavigationPage> {
                 icon: Icon(Icons.cleaning_services_outlined),
                 selectedIcon: Icon(Icons.cleaning_services),
                 label: 'Cleanup',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.history_outlined),
+                selectedIcon: Icon(Icons.history),
+                label: 'History',
               ),
               NavigationDestination(
                 icon: Icon(Icons.settings_outlined),
