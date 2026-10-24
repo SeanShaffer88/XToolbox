@@ -75,6 +75,11 @@ runs the checker weekly and opens an issue when it finds dead links.
 Most contributions are catalog entries. The catalog is
 `assets/asset_list.json`, a JSON array loaded at startup by
 `lib/provider/asset_provider.dart` and parsed by `lib/models/asset.dart`.
+Catalog changes merged to `main` reach installed apps without an app
+release: on startup the app fetches the catalog published here,
+adopts it only if it validates as a complete catalog, and caches it
+(`lib/services/catalog_service.dart`); the bundled copy remains the
+offline fallback.
 Each entry looks like this:
 
 ```json
