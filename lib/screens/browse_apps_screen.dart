@@ -249,6 +249,7 @@ class _BrowseAppsScreenState extends State<BrowseAppsScreen> {
       final result = await installHandler.handleInstall(
         method: method,
         appName: asset.name,
+        assetId: asset.id,
       );
 
       if (result == InstallResult.success) {
