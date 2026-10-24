@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/asset.dart';
+import '../provider/asset_provider.dart';
 import '../services/install_handler_service.dart';
 import '../utils/iconmap_util.dart';
 
@@ -33,22 +34,29 @@ class ViewItemWidget extends StatelessWidget {
     BuildContext context,
     InstallMethod method,
   ) async {
-    // Close the dialog first
-    Navigator.of(context).pop();
-
     final installHandler = Provider.of<InstallHandlerService>(
       context,
       listen: false,
     );
+    final assetProvider = Provider.of<AssetProvider>(context, listen: false);
+
+    // Close the dialog first
+    Navigator.of(context).pop();
 
     // Use the install handler service which has auto-retry logic
     await installHandler.handleInstall(method: method, appName: asset.name);
+
+    // Keep the Installed badges truthful after a package-manager install.
+    if (method.packageId != null) {
+      await assetProvider.refreshInstalledPackages();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
+    final assetProvider = context.watch<AssetProvider>();
 
     return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -166,6 +174,11 @@ class ViewItemWidget extends StatelessWidget {
                       ...asset.installMethods.map(
                         (method) => _InstallMethodCard(
                           method: method,
+                          installedVersion: method.packageId == null
+                              ? null
+                              : assetProvider.installedVersionFor(
+                                  method.packageId!,
+                                ),
                           onInstall: () => _handleInstall(context, method),
                         ),
                       ),
@@ -184,8 +197,13 @@ class ViewItemWidget extends StatelessWidget {
 class _InstallMethodCard extends StatefulWidget {
   final InstallMethod method;
   final VoidCallback onInstall;
+  final String? installedVersion;
 
-  const _InstallMethodCard({required this.method, required this.onInstall});
+  const _InstallMethodCard({
+    required this.method,
+    required this.onInstall,
+    this.installedVersion,
+  });
 
   @override
   State<_InstallMethodCard> createState() => _InstallMethodCardState();
@@ -256,6 +274,26 @@ class _InstallMethodCardState extends State<_InstallMethodCard> {
                         color: theme.textTheme.bodySmall?.color,
                       ),
                     ),
+                    if (widget.installedVersion != null) ...[
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.check_circle,
+                            size: 16,
+                            color: Colors.green.shade600,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Installed · v${widget.installedVersion}',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: Colors.green.shade600,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),
