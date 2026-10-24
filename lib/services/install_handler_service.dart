@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'toast_notification_service.dart';
 import 'download_service.dart';
+import 'distro_resolver.dart';
 import '../models/asset.dart';
 
 enum InstallResult { success, failed, packageManagerNotInstalled, cancelled }
@@ -13,8 +14,13 @@ enum InstallResult { success, failed, packageManagerNotInstalled, cancelled }
 class InstallHandlerService {
   final ToastNotificationService _toastService;
   final DownloadService _downloadService;
+  final DistroResolver _distroResolver;
 
-  InstallHandlerService(this._toastService, this._downloadService);
+  InstallHandlerService(
+    this._toastService,
+    this._downloadService, [
+    DistroResolver? distroResolver,
+  ]) : _distroResolver = distroResolver ?? DistroResolver();
 
   /// Main install handler that processes install methods with auto-retry logic
   Future<InstallResult> handleInstall({
@@ -81,6 +87,31 @@ class InstallHandlerService {
       return InstallResult.failed;
     }
 
+    // Some catalog URLs are templates containing a %TOKEN% placeholder
+    // (distro ISO images whose version changes every release). Resolve
+    // the template to the current real URL first; never download the
+    // template itself.
+    var url = method.url!;
+    if (DistroResolver.needsResolution(url)) {
+      _toastService.updateNotification(
+        id: toastId,
+        status: ToastStatus.inProgress,
+        message: 'Finding the latest $appName image...',
+      );
+      final resolved = await _distroResolver.resolve(url);
+      if (resolved == null) {
+        _toastService.updateNotification(
+          id: toastId,
+          status: ToastStatus.error,
+          message:
+              'Could not find the current $appName image. '
+              'Check your connection and try again.',
+        );
+        return InstallResult.failed;
+      }
+      url = resolved;
+    }
+
     _toastService.updateNotification(
       id: toastId,
       status: ToastStatus.inProgress,
@@ -91,7 +122,7 @@ class InstallHandlerService {
     // configured download path). executable_path only selects the file
     // inside that folder, so it must not be passed as the extract path.
     final result = await _downloadService.downloadFile(
-      url: method.url!,
+      url: url,
       displayName: appName,
       filename: method.filename,
       needsExtraction: method.needsExtraction,
