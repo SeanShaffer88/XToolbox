@@ -5,6 +5,17 @@ All notable changes to XToolBox are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.6] - 2026-10-23
+
+### Added
+
+- **Favorites and Recently Installed.** The details dialog has a
+  star toggle; starred packages appear under a Favorites entry at
+  the top of the Browse sidebar. Successful installs are recorded
+  (most recent first, up to 10) under a Recently Installed entry.
+  Both lists persist across runs. Each virtual category has its own
+  empty-state explanation instead of the generic "no packages" text.
+
 ## [5.3.5] - 2026-10-23
 
 ### Added
