@@ -108,6 +108,7 @@ class InstallMethod {
   final String? packageId;
   final String? storeId;
   final String? command;
+  final String? sha256;
 
   InstallMethod({
     required this.type,
@@ -119,6 +120,7 @@ class InstallMethod {
     this.packageId,
     this.storeId,
     this.command,
+    this.sha256,
   });
 
   factory InstallMethod.fromJson(Map<String, dynamic> json) {
@@ -132,6 +134,7 @@ class InstallMethod {
       packageId: json['package_id'] as String?,
       storeId: json['store_id'] as String?,
       command: json['command'] as String?,
+      sha256: json['sha256'] as String?,
     );
   }
 
@@ -146,6 +149,7 @@ class InstallMethod {
       if (packageId != null) 'package_id': packageId,
       if (storeId != null) 'store_id': storeId,
       if (command != null) 'command': command,
+      if (sha256 != null) 'sha256': sha256,
     };
   }
 }

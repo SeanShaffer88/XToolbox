@@ -127,6 +127,7 @@ class InstallHandlerService {
       filename: method.filename,
       needsExtraction: method.needsExtraction,
       autoComplete: false, // We'll handle the completion toast
+      expectedSha256: method.sha256,
     );
 
     if (result == null) {

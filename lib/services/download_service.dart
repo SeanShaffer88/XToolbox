@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -33,6 +34,20 @@ class DownloadService {
   static bool isUrlAllowed(String url, {required bool httpsOnly}) {
     if (!httpsOnly) return true;
     return Uri.tryParse(url)?.scheme.toLowerCase() == 'https';
+  }
+
+  /// The SHA-256 digest of [file], streamed so large images do not
+  /// have to fit in memory.
+  static Future<String> sha256OfFile(File file) async {
+    final digest = await sha256.bind(file.openRead()).first;
+    return digest.toString();
+  }
+
+  /// Whether two SHA-256 hex digests are equal, ignoring case and
+  /// surrounding whitespace.
+  @visibleForTesting
+  static bool checksumMatches(String expected, String actual) {
+    return expected.trim().toLowerCase() == actual.trim().toLowerCase();
   }
 
   /// How long to pause after [bytesDownloaded] bytes so the average
@@ -113,6 +128,7 @@ class DownloadService {
     String? filename,
     bool needsExtraction = false,
     bool autoComplete = true,
+    String? expectedSha256,
   }) async {
     String? toastId;
     File? outputFile;
@@ -220,6 +236,27 @@ class DownloadService {
         await sink.close();
       }
       downloadCompleted = true;
+
+      // Integrity check: when the catalog pins a SHA-256 for this
+      // download, the file must match it before anything extracts or
+      // launches it. A mismatch means the file is not what the catalog
+      // entry promises — delete it and fail loudly.
+      if (expectedSha256 != null) {
+        _toastService.updateNotification(
+          id: toastId,
+          message: 'Verifying checksum...',
+          progress: null,
+        );
+        final actualSha256 = await sha256OfFile(outputFile);
+        if (!checksumMatches(expectedSha256, actualSha256)) {
+          await outputFile.delete();
+          throw Exception(
+            'Checksum mismatch for $fileName — the download does not '
+            'match the catalog\'s SHA-256 and was deleted. Expected '
+            '$expectedSha256, got $actualSha256.',
+          );
+        }
+      }
 
       if (needsExtraction) {
         if (!supportsAutomaticExtraction(filePath)) {
