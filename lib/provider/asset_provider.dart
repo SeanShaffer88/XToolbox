@@ -1,16 +1,19 @@
-import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../models/asset.dart';
+import '../services/catalog_service.dart';
 import '../services/winget_service.dart';
 
 class AssetProvider extends ChangeNotifier {
   final WingetService _wingetService;
+  final CatalogService _catalogService;
 
-  AssetProvider({WingetService? wingetService})
-    : _wingetService = wingetService ?? WingetService();
+  AssetProvider({WingetService? wingetService, CatalogService? catalogService})
+    : _wingetService = wingetService ?? WingetService(),
+      _catalogService = catalogService ?? CatalogService();
 
   List<Asset> _assets = [];
   bool _isLoading = false;
@@ -19,6 +22,19 @@ class AssetProvider extends ChangeNotifier {
   List<Asset> get assets => _assets;
   bool get isLoading => _isLoading;
   String? get error => _error;
+
+  /// Whether the loaded catalog came from the remote catalog cache
+  /// rather than the copy bundled with the app.
+  bool _usingRemoteCatalog = false;
+  bool get usingRemoteCatalog => _usingRemoteCatalog;
+
+  /// When the remote catalog in use was fetched, if known.
+  DateTime? _catalogFetchedAt;
+  DateTime? get catalogFetchedAt => _catalogFetchedAt;
+
+  /// Hash of the catalog text currently loaded, so a background
+  /// refresh only swaps the catalog in when it actually changed.
+  String? _catalogTextHash;
 
   /// Installed winget packages: package id → installed version.
   Map<String, String> _installedPackages = {};
@@ -59,11 +75,25 @@ class AssetProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final String jsonString = await rootBundle.loadString(
-        'assets/asset_list.json',
-      );
-      final List<dynamic> jsonData = json.decode(jsonString);
-      _assets = jsonData.map((json) => Asset.fromJson(json)).toList();
+      // A previously fetched remote catalog wins over the bundled
+      // copy; the bundled copy is the always-available fallback.
+      final cached = await _catalogService.loadCachedCatalogText();
+      if (cached != null) {
+        _assets = CatalogService.tryParseCatalog(cached)!;
+        _usingRemoteCatalog = true;
+        _catalogFetchedAt = await _catalogService.cachedCatalogFetchedAt();
+        _catalogTextHash = CatalogService.catalogHash(cached);
+      } else {
+        final bundled = await rootBundle.loadString('assets/asset_list.json');
+        final parsed = CatalogService.tryParseCatalog(bundled);
+        if (parsed == null) {
+          throw StateError('The bundled catalog is not valid');
+        }
+        _assets = parsed;
+        _usingRemoteCatalog = false;
+        _catalogFetchedAt = null;
+        _catalogTextHash = CatalogService.catalogHash(bundled);
+      }
       _error = null;
     } catch (e) {
       _error = 'Failed to load assets: $e';
@@ -72,5 +102,24 @@ class AssetProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+
+    // Refresh in the background; if a newer catalog was adopted, it
+    // is swapped in below. Loading never waits on the network.
+    unawaited(_refreshCatalog());
+  }
+
+  Future<void> _refreshCatalog() async {
+    if (!await _catalogService.refresh()) return;
+    final text = await _catalogService.loadCachedCatalogText();
+    if (text == null) return;
+    final hash = CatalogService.catalogHash(text);
+    if (hash == _catalogTextHash) return;
+    final parsed = CatalogService.tryParseCatalog(text);
+    if (parsed == null) return;
+    _assets = parsed;
+    _usingRemoteCatalog = true;
+    _catalogFetchedAt = await _catalogService.cachedCatalogFetchedAt();
+    _catalogTextHash = hash;
+    notifyListeners();
   }
 }

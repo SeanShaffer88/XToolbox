@@ -5,6 +5,19 @@ All notable changes to XToolBox are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.12] - 2026-10-24
+
+### Added
+
+- **The catalog now stays fresh between releases.** XToolBox checks
+  the catalog published in its project repository when it starts: a
+  newer catalog is adopted only after it validates as a complete,
+  well-formed catalog, it is cached on disk, and it swaps in without
+  a restart. With no network — or a bad response — the app simply
+  uses the last good copy or the bundled catalog, so it always works
+  fully offline. Tools added to the repository catalog now reach
+  users without waiting for the next app release.
+
 ## [5.3.11] - 2026-10-23
 
 ### Added
