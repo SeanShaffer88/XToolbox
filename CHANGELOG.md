@@ -5,6 +5,27 @@ All notable changes to XToolBox are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.10] - 2026-10-23
+
+### Added
+
+- **Automated catalog link checks.** `tool/check_catalog_links.py`
+  verifies every download link and homepage in the catalog and sorts
+  the results into ok, moved, dead, blocked (anti-bot), error, and
+  skipped (distro ISO templates, which the app resolves itself at
+  runtime). A scheduled workflow runs it weekly and opens an issue
+  when a link dies, so rot is caught between manual sweeps instead of
+  by user reports.
+
+### Fixed
+
+- Six catalog links that permanently redirect to new homes — the
+  Bloxstrap and Lively Wallpaper projects (moved to new GitHub
+  organizations), Patch My PC's home updater page, the Pop!_OS
+  Raspberry Pi website link, the Python homepage, and Rectify11's
+  website link — now point directly at their current addresses,
+  found by the new checker on its first run.
+
 ## [5.3.9] - 2026-10-23
 
 ### Added
