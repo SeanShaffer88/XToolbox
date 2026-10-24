@@ -5,6 +5,17 @@ All notable changes to XToolBox are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.5] - 2026-10-23
+
+### Added
+
+- **Uninstall for winget entries.** When a winget option shows as
+  installed, the details dialog now offers Uninstall next to Install.
+  It asks for confirmation first (explaining that the app's own
+  settings may remain), then runs `winget uninstall` silently and
+  refreshes the installed state. Other install types are unchanged —
+  there is still no in-app uninstall for direct downloads.
+
 ## [5.3.4] - 2026-10-23
 
 ### Added
