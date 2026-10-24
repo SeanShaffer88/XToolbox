@@ -81,6 +81,44 @@ class InstallHandlerService {
   /// Uninstalls a winget package, with the same toast reporting as
   /// installs. Only winget methods can be uninstalled this way; the
   /// caller confirms with the user first.
+  Future<InstallResult> handleUpgrade({
+    required InstallMethod method,
+    required String appName,
+  }) async {
+    if (method.type != InstallType.winget || method.packageId == null) {
+      return InstallResult.failed;
+    }
+    String? toastId;
+    try {
+      toastId = _toastService.addNotification(
+        title: 'Upgrading $appName',
+        message: 'Using Winget...',
+        status: ToastStatus.pending,
+      );
+      _toastService.updateNotification(
+        id: toastId,
+        status: ToastStatus.inProgress,
+        message: 'Upgrading...',
+      );
+      final ok = await _wingetService.upgrade(method.packageId!);
+      _toastService.updateNotification(
+        id: toastId,
+        status: ok ? ToastStatus.success : ToastStatus.error,
+        message: ok ? '$appName upgraded' : 'Winget could not upgrade $appName',
+      );
+      return ok ? InstallResult.success : InstallResult.failed;
+    } catch (e) {
+      if (toastId != null) {
+        _toastService.updateNotification(
+          id: toastId,
+          status: ToastStatus.error,
+          message: 'Upgrade failed: $e',
+        );
+      }
+      return InstallResult.failed;
+    }
+  }
+
   Future<InstallResult> handleUninstall({
     required InstallMethod method,
     required String appName,
