@@ -8,6 +8,11 @@ class SettingsService extends ChangeNotifier {
   static const _httpsOnlyKey = 'https_only_mode';
   static const _bandwidthLimitKey = 'bandwidth_limit_kbps';
   static const _installPreferenceKey = 'install_preference_order';
+  static const _favoritesKey = 'favorite_asset_ids';
+  static const _recentInstallsKey = 'recent_install_ids';
+
+  /// How many recently installed entries are kept.
+  static const maxRecentInstalls = 10;
 
   SharedPreferences? _prefs;
   bool _autoUpdate = true;
@@ -21,6 +26,8 @@ class SettingsService extends ChangeNotifier {
     'chocolatey',
     'scoop',
   ];
+  List<String> _favorites = [];
+  List<String> _recentInstalls = [];
 
   SettingsService() {
     _init();
@@ -38,6 +45,9 @@ class SettingsService extends ChangeNotifier {
       _installPreference = prefOrder;
     }
 
+    _favorites = _prefs?.getStringList(_favoritesKey) ?? [];
+    _recentInstalls = _prefs?.getStringList(_recentInstallsKey) ?? [];
+
     notifyListeners();
   }
 
@@ -46,6 +56,38 @@ class SettingsService extends ChangeNotifier {
   bool get httpsOnly => _httpsOnly;
   int? get bandwidthLimit => _bandwidthLimit;
   List<String> get installPreference => List.unmodifiable(_installPreference);
+  List<String> get favorites => List.unmodifiable(_favorites);
+  List<String> get recentInstalls => List.unmodifiable(_recentInstalls);
+
+  bool isFavorite(String assetId) => _favorites.contains(assetId);
+
+  /// The favorites list with [assetId] toggled.
+  static List<String> updatedFavorites(List<String> current, String assetId) {
+    final next = List<String>.of(current);
+    if (!next.remove(assetId)) next.add(assetId);
+    return next;
+  }
+
+  /// The recents list with [assetId] moved to the front, de-duplicated
+  /// and capped at [maxRecentInstalls].
+  static List<String> updatedRecents(List<String> current, String assetId) {
+    return [
+      assetId,
+      ...current.where((id) => id != assetId),
+    ].take(maxRecentInstalls).toList();
+  }
+
+  Future<void> toggleFavorite(String assetId) async {
+    _favorites = updatedFavorites(_favorites, assetId);
+    await _prefs?.setStringList(_favoritesKey, _favorites);
+    notifyListeners();
+  }
+
+  Future<void> recordRecentInstall(String assetId) async {
+    _recentInstalls = updatedRecents(_recentInstalls, assetId);
+    await _prefs?.setStringList(_recentInstallsKey, _recentInstalls);
+    notifyListeners();
+  }
 
   Future<void> setAutoUpdate(bool value) async {
     _autoUpdate = value;
